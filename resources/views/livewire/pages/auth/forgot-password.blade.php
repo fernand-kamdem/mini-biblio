@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
+new #[Layout('layouts.auth')] class extends Component
 {
     public string $email = '';
 
@@ -36,26 +36,109 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<div class="space-y-6">
+    <!-- En-tête -->
+    <div class="text-center">
+        <div class="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-unlock-alt text-2xl text-indigo-600"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900">Mot de passe oublié ?</h2>
+        <p class="mt-2 text-sm text-gray-600">
+            Entrez votre email pour recevoir un lien de réinitialisation
+        </p>
+    </div>
+
+    <!-- Message d'information -->
+    <div class="rounded-lg bg-blue-50 border border-blue-200 p-4">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-blue-700">
+                    {{ __('Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.') }}
+                </p>
+            </div>
+        </div>
     </div>
 
     <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    @if (session('status'))
+        <div class="rounded-lg bg-green-50 border border-green-200 p-4 animate-pulse">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-green-800">
+                        Email envoyé avec succès !
+                    </p>
+                    <p class="text-sm text-green-700 mt-1">
+                        {{ session('status') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
 
-    <form wire:submit="sendPasswordResetLink">
+    <form wire:submit="sendPasswordResetLink" class="space-y-5">
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="email" :value="__('Adresse email')" class="text-sm font-medium text-gray-700" />
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-envelope text-gray-400"></i>
+                </div>
+                <x-text-input 
+                    wire:model="email" 
+                    id="email" 
+                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
+                    type="email" 
+                    name="email" 
+                    required 
+                    autofocus 
+                    autocomplete="username"
+                    placeholder="votre@email.com"
+                />
+            </div>
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-600" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
+        <!-- Submit Button -->
+        <button 
+            type="submit" 
+            wire:loading.attr="disabled"
+            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+            <span wire:loading.remove>
+                <i class="fas fa-paper-plane mr-2"></i>
+                {{ __('Envoyer le lien de réinitialisation') }}
+            </span>
+            <span wire:loading>
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Envoi en cours...
+            </span>
+        </button>
+
+        <!-- Lien de retour -->
+        <div class="text-center pt-2">
+            <p class="text-sm text-gray-600">
+                <i class="fas fa-arrow-left mr-1 text-xs"></i>
+                <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-medium transition duration-150" wire:navigate>
+                    Retour à la connexion
+                </a>
+            </p>
         </div>
     </form>
+
+    <!-- Footer info -->
+    <div class="text-center pt-2 border-t border-gray-200">
+        <p class="text-xs text-gray-400">
+            <i class="fas fa-shield-alt mr-1"></i>
+            Vos données sont sécurisées et protégées
+        </p>
+    </div>
 </div>
