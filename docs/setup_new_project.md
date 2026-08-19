@@ -1,20 +1,5 @@
-laravel new mini-biblio # starter : None
-cd mini-biblio
+# Raccourci `laravel new`
 
-# retirer boost:update du composer.json s’il est là
+Le détail (fichiers, commentaires, pièges) est dans [README.md](./README.md).
 
-composer require livewire/livewire livewire/volt nwidart/laravel-modules spatie/laravel-permission
-composer require laravel/breeze --dev
-php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-php artisan breeze:install livewire --pest --no-interaction
-npm install && npm run build
-php artisan migrate
-php artisan serve
-
-# GIT
-
-git init && git branch -m main
-git add . && git commit -m "Socle Laravel Livewire Breeze."
-git remote add origin git@github.com:USER/mini-biblio.git
-git push -u origin main
-git checkout -b feat/auth-breeze-livewire
+Ordre : [00](./00-machine-et-laravel-new.md) → [01 Breeze](./01-feat-auth-breeze-livewire.md) → [02 Easy Day](./02-feat-auth-login-easyday.md).
