@@ -10,7 +10,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.auth')] class extends Component
+new #[Layout('layouts.guest')] class extends Component
 {
     #[Locked]
     public string $token = '';
@@ -51,11 +51,11 @@ new #[Layout('layouts.auth')] class extends Component
         }
 
         return match (true) {
-            $score <= 1 => ['percentage' => 20, 'label' => 'Très faible', 'bar' => 'bg-red-500', 'text' => 'text-red-500'],
-            $score === 2 => ['percentage' => 40, 'label' => 'Faible', 'bar' => 'bg-orange-400', 'text' => 'text-orange-500'],
-            $score === 3 => ['percentage' => 60, 'label' => 'Moyen', 'bar' => 'bg-yellow-400', 'text' => 'text-yellow-600'],
-            $score === 4 => ['percentage' => 80, 'label' => 'Fort', 'bar' => 'bg-blue-500', 'text' => 'text-blue-500'],
-            default => ['percentage' => 100, 'label' => 'Très fort', 'bar' => 'bg-green-500', 'text' => 'text-green-600'],
+            $score <= 1 => ['percentage' => 20, 'label' => __('Very weak'), 'bar' => 'bg-red-500', 'text' => 'text-red-500'],
+            $score === 2 => ['percentage' => 40, 'label' => __('Weak'), 'bar' => 'bg-orange-400', 'text' => 'text-orange-500'],
+            $score === 3 => ['percentage' => 60, 'label' => __('Fair'), 'bar' => 'bg-yellow-400', 'text' => 'text-yellow-600'],
+            $score === 4 => ['percentage' => 80, 'label' => __('Strong'), 'bar' => 'bg-blue-500', 'text' => 'text-blue-500'],
+            default => ['percentage' => 100, 'label' => __('Very strong'), 'bar' => 'bg-green-500', 'text' => 'text-green-600'],
         };
     }
 
@@ -116,9 +116,9 @@ new #[Layout('layouts.auth')] class extends Component
         <div class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
             <i class="fas fa-key text-2xl text-amber-600"></i>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900">Nouveau mot de passe</h2>
+        <h2 class="text-2xl font-bold text-gray-900">{{ __('New password') }}</h2>
         <p class="mt-2 text-sm text-gray-600">
-            Choisissez un mot de passe sécurisé pour votre compte
+            {{ __('Choose a secure password for your account') }}
         </p>
     </div>
 
@@ -144,7 +144,7 @@ new #[Layout('layouts.auth')] class extends Component
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Adresse email')" class="text-sm font-medium text-gray-700" />
+            <x-input-label for="email" :value="__('Email Address')" class="text-sm font-medium text-gray-700" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-envelope text-gray-400"></i>
@@ -166,7 +166,7 @@ new #[Layout('layouts.auth')] class extends Component
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Nouveau mot de passe')" class="text-sm font-medium text-gray-700" />
+            <x-input-label for="password" :value="__('New password')" class="text-sm font-medium text-gray-700" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-lock text-gray-400"></i>
@@ -190,7 +190,7 @@ new #[Layout('layouts.auth')] class extends Component
             @php $s = $this->passwordStrength(); @endphp
             <div class="mt-2 space-y-1">
                 <div class="flex items-center gap-2 text-xs">
-                    <span class="text-gray-500">Force du mot de passe :</span>
+                    <span class="text-gray-500">{{ __('Password strength:') }}</span>
                     <span class="font-medium {{ $s['text'] }}">{{ $s['label'] }}</span>
                 </div>
                 <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
@@ -201,7 +201,7 @@ new #[Layout('layouts.auth')] class extends Component
 
         <!-- Confirm Password -->
         <div>
-            <x-input-label for="password_confirmation" :value="__('Confirmer le mot de passe')" class="text-sm font-medium text-gray-700" />
+            <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-sm font-medium text-gray-700" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-check-circle text-gray-400"></i>
@@ -214,7 +214,7 @@ new #[Layout('layouts.auth')] class extends Component
                     name="password_confirmation"
                     required
                     autocomplete="new-password"
-                    placeholder="Confirmez votre mot de passe"
+                    placeholder="{{ __('Confirm your password') }}"
                 />
                 <button type="button" wire:click="$toggle('showPasswordConfirmation')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <i class="fas {{ $showPasswordConfirmation ? 'fa-eye-slash' : 'fa-eye' }} text-gray-400 hover:text-gray-600"></i>
@@ -227,12 +227,12 @@ new #[Layout('layouts.auth')] class extends Component
         @if ($password && $password_confirmation && $password === $password_confirmation)
             <div class="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded-lg p-2 px-3 border border-green-200">
                 <i class="fas fa-check-circle"></i>
-                <span>Les mots de passe correspondent</span>
+                <span>{{ __('Passwords match') }}</span>
             </div>
         @elseif ($password && $password_confirmation && $password !== $password_confirmation)
             <div class="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-lg p-2 px-3 border border-red-200">
                 <i class="fas fa-times-circle"></i>
-                <span>Les mots de passe ne correspondent pas</span>
+                <span>{{ __('Passwords do not match') }}</span>
             </div>
         @endif
 
@@ -245,10 +245,10 @@ new #[Layout('layouts.auth')] class extends Component
         >
             <span wire:loading.remove wire:target="resetPassword">
                 <i class="fas fa-save mr-2"></i>
-                {{ __('Réinitialiser le mot de passe') }}
+                {{ __('Reset Password') }}
             </span>
             <span wire:loading wire:target="resetPassword">
-                Réinitialisation en cours...
+                {{ __('Resetting...') }}
             </span>
         </button>
 
@@ -257,7 +257,7 @@ new #[Layout('layouts.auth')] class extends Component
             <p class="text-sm text-gray-600">
                 <i class="fas fa-arrow-left mr-1 text-xs"></i>
                 <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-medium transition duration-150" wire:navigate>
-                    Retour à la connexion
+                    {{ __('Back to login') }}
                 </a>
             </p>
         </div>

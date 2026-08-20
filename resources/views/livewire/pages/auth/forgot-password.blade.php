@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.auth')] class extends Component
+new #[Layout('layouts.guest')] class extends Component
 {
     public string $email = '';
 
@@ -42,9 +42,9 @@ new #[Layout('layouts.auth')] class extends Component
         <div class="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
             <i class="fas fa-unlock-alt text-2xl text-indigo-600"></i>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900">Mot de passe oublié ?</h2>
+        <h2 class="text-2xl font-bold text-gray-900">{{ __('Forgot your password?') }}</h2>
         <p class="mt-2 text-sm text-gray-600">
-            Entrez votre email pour recevoir un lien de réinitialisation
+            {{ __('Enter your email to receive a reset link') }}
         </p>
     </div>
 
@@ -56,7 +56,7 @@ new #[Layout('layouts.auth')] class extends Component
             </div>
             <div class="ml-3">
                 <p class="text-sm text-blue-700">
-                    {{ __('Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.') }}
+                    {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
                 </p>
             </div>
         </div>
@@ -71,7 +71,7 @@ new #[Layout('layouts.auth')] class extends Component
                 </div>
                 <div class="ml-3">
                     <p class="text-sm font-medium text-green-800">
-                        Email envoyé avec succès !
+                        {{ __('Email sent successfully!') }}
                     </p>
                     <p class="text-sm text-green-700 mt-1">
                         {{ session('status') }}
@@ -84,7 +84,7 @@ new #[Layout('layouts.auth')] class extends Component
     <form wire:submit="sendPasswordResetLink" class="space-y-5">
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Adresse email')" class="text-sm font-medium text-gray-700" />
+            <x-input-label for="email" :value="__('Email Address')" class="text-sm font-medium text-gray-700" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-envelope text-gray-400"></i>
@@ -112,14 +112,14 @@ new #[Layout('layouts.auth')] class extends Component
         >
             <span wire:loading.remove>
                 <i class="fas fa-paper-plane mr-2"></i>
-                {{ __('Envoyer le lien de réinitialisation') }}
+                {{ __('Email password reset link') }}
             </span>
             <span wire:loading>
                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Envoi en cours...
+                {{ __('Sending...') }}
             </span>
         </button>
 
@@ -128,7 +128,7 @@ new #[Layout('layouts.auth')] class extends Component
             <p class="text-sm text-gray-600">
                 <i class="fas fa-arrow-left mr-1 text-xs"></i>
                 <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-medium transition duration-150" wire:navigate>
-                    Retour à la connexion
+                    {{ __('Back to login') }}
                 </a>
             </p>
         </div>
@@ -138,7 +138,7 @@ new #[Layout('layouts.auth')] class extends Component
     <div class="text-center pt-2 border-t border-gray-200">
         <p class="text-xs text-gray-400">
             <i class="fas fa-shield-alt mr-1"></i>
-            Vos données sont sécurisées et protégées
+            {{ __('Your data is secure and protected') }}
         </p>
     </div>
 </div>
