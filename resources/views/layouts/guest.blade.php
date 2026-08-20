@@ -29,19 +29,17 @@
                         <i class="fas fa-book-open text-2xl text-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight">Bibliothèque</h1>
-                        <p class="text-white/80 text-sm">Gestionnaire de bibliothèque</p>
+                        <h1 class="text-2xl font-bold tracking-tight">{{ __('Library') }}</h1>
+                        <p class="text-white/80 text-sm">{{ __('Library manager') }}</p>
                     </div>
                 </div>
 
                 <div class="mt-16 space-y-6">
                     <h2 class="text-4xl font-bold text-white leading-tight">
-                        Bienvenue sur<br>
-                        <span class="text-indigo-200">votre bibliothèque</span>
-                        numérique
+                        {!! __('Welcome to<br><span class="text-indigo-200">your digital</span><br>library') !!}
                     </h2>
                     <p class="text-white/80 text-lg max-w-md">
-                        Gérez efficacement vos livres, membres et emprunts dans un espace centralisé et sécurisé.
+                        {{ __('Efficiently manage your books, members and loans in a centralized and secure space.') }}
                     </p>
 
                     <div class="grid grid-cols-2 gap-4 mt-8">
@@ -50,7 +48,7 @@
                                 <i class="fas fa-book text-xl text-indigo-200"></i>
                                 <div>
                                     <p class="text-2xl font-bold">+1200</p>
-                                    <p class="text-sm text-white/70">Livres disponibles</p>
+                                    <p class="text-sm text-white/70">{{ __('Available books') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +57,7 @@
                                 <i class="fas fa-users text-xl text-indigo-200"></i>
                                 <div>
                                     <p class="text-2xl font-bold">+450</p>
-                                    <p class="text-sm text-white/70">Membres actifs</p>
+                                    <p class="text-sm text-white/70">{{ __('Active members') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -68,12 +66,16 @@
             </div>
 
             <div class="relative z-10 text-white/60 text-sm">
-                <p>© 2026 Bibliothèque. Tous droits réservés.</p>
+                <p>{{ __('© 2026 Library. All rights reserved.') }}</p>
             </div>
         </div>
 
         <!-- Colonne Droite -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-gray-50">
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-gray-50 relative">
+            <div class="absolute top-4 right-4 sm:top-6 sm:right-6">
+                <x-language-switcher />
+            </div>
+
             <div class="w-full max-w-md">
                 <div class="lg:hidden flex justify-center mb-8">
                     <div class="flex items-center gap-3">
@@ -81,8 +83,8 @@
                             <i class="fas fa-book-open text-2xl text-white"></i>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">Bibliothèque</h1>
-                            <p class="text-sm text-gray-500">Gestionnaire de bibliothèque</p>
+                            <h1 class="text-2xl font-bold text-gray-900">{{ __('Library') }}</h1>
+                            <p class="text-sm text-gray-500">{{ __('Library manager') }}</p>
                         </div>
                     </div>
                 </div>
@@ -93,9 +95,9 @@
 
                 <div class="mt-6 text-center text-sm text-gray-500">
                     <p>
-                        Besoin d'aide ? 
+                        {{ __('Need help?') }}
                         <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                            Contactez-nous
+                            {{ __('Contact us') }}
                         </a>
                     </p>
                 </div>

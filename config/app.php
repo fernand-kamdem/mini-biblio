@@ -78,11 +78,26 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'fr'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'fr_FR'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Internationalisation
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the language switcher is shown in the UI and users can
+    | persist their preferred locale (fr / en).
+    |
+    */
+
+    'user_internationalisation' => filter_var(
+        env('USER_INTERNATIONALISATION', true),
+        FILTER_VALIDATE_BOOLEAN
+    ),
 
     /*
     |--------------------------------------------------------------------------

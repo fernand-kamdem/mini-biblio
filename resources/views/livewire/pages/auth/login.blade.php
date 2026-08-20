@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.auth')] class extends Component
+new #[Layout('layouts.guest')] class extends Component
 {
     public LoginForm $form;
     public bool $showPassword = false;
@@ -28,8 +28,8 @@ new #[Layout('layouts.auth')] class extends Component
 <div class="space-y-6">
     <!-- En-tête -->
     <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-900">Connexion</h2>
-        <p class="mt-2 text-sm text-gray-600">Accédez à votre espace bibliothèque</p>
+        <h2 class="text-2xl font-bold text-gray-900">{{ __('Login') }}</h2>
+        <p class="mt-2 text-sm text-gray-600">{{ __('Access your library space') }}</p>
     </div>
 
     <!-- Session Status -->
@@ -61,10 +61,10 @@ new #[Layout('layouts.auth')] class extends Component
         <!-- Password -->
         <div class="mt-4">
             <div class="flex items-center justify-between">
-                <x-input-label for="password" :value="__('Mot de passe')" class="text-sm font-medium text-gray-700" />
+                <x-input-label for="password" :value="__('Password')" class="text-sm font-medium text-gray-700" />
                 @if (Route::has('password.request'))
                     <a class="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition duration-150" href="{{ route('password.request') }}" wire:navigate>
-                        {{ __('Mot de passe oublié ?') }}
+                        {{ __('Forgot Password?') }}
                     </a>
                 @endif
             </div>
@@ -87,7 +87,6 @@ new #[Layout('layouts.auth')] class extends Component
                     <i class="fas {{ $showPassword ? 'fa-eye-slash' : 'fa-eye' }} text-gray-400 hover:text-gray-600"></i>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('form.password')" class="mt-2 text-sm text-red-600" />
         </div>
 
         <!-- Remember Me -->
@@ -100,7 +99,7 @@ new #[Layout('layouts.auth')] class extends Component
                     class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 focus:ring-2 transition duration-150" 
                     name="remember"
                 >
-                <span class="ms-2 text-sm text-gray-600">{{ __('Se souvenir de moi') }}</span>
+                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
             </label>
         </div>
 
@@ -114,20 +113,19 @@ new #[Layout('layouts.auth')] class extends Component
         >
             <span wire:loading.remove wire:target="login">
                 <i class="fas fa-sign-in-alt mr-2"></i>
-                {{ __('Se connecter') }}
+                {{ __('Log in') }}
             </span>
             <span wire:loading wire:target="login">
-                {{-- spinner --}}
-                Connexion en cours...
+                {{ __('Signing in...') }}
             </span>
         </button>
 
         <!-- Lien d'inscription -->
         <div class="text-center">
             <p class="text-sm text-gray-600">
-                Pas encore de compte ? 
+                {{ __("Don't have an account yet?") }}
                 <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium transition duration-150" wire:navigate>
-                    Créer un compte
+                    {{ __('Create account') }}
                 </a>
             </p>
         </div>

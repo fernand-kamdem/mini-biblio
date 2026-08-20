@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use App\Http\Middleware\IsActive;
+use App\Http\Middleware\SetLocale;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
     // est actif avant de poursuivre la requête.
     $middleware->appendToGroup('web', [
         IsActive::class,
+        SetLocale::class,
     ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
