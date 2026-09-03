@@ -1,0 +1,11 @@
+{
+    "name": "Emprunt",
+    "alias": "emprunt",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Emprunt\\Providers\\EmpruntServiceProvider"
+    ],
+    "files": []
+}

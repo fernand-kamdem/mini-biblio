@@ -11,8 +11,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Emprunt\Models\Member;
+use Modules\Emprunt\Models\Emprunt;
 
 
 /**
@@ -56,5 +61,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
+    }
+
+
+    public function member(): HasOne
+    {
+        return $this->hasOne(Member::class);
+    }
+
+    public function empruntsApprouves():HasMany
+    {
+        return $this->hasMany(Emprunt::class, 'approuve_par');        
     }
 }
