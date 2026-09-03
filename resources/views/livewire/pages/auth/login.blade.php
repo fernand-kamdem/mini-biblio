@@ -25,6 +25,7 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
+@section('title', config('app.name') . ' | ' . __('Login'))
 <div class="space-y-6">
     <!-- En-tête -->
     <div class="text-center">

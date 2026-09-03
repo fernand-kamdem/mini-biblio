@@ -35,6 +35,10 @@ class RolesPermissionsSeeder extends Seeder
         // Chaque permission représente une action qu'un utilisateur
         // peut avoir le droit d'effectuer.
         $permissions = [
+            'voir-catégories',
+            'gérer-catégories',
+            'voir-auteurs',
+            'gérer-auteurs',
             'voir-livres',
             'gérer-livres',
             'créer-emprunt',
@@ -97,6 +101,10 @@ class RolesPermissionsSeeder extends Seeder
         // - valider les retours ;
         // - consulter et gérer les membres.
         $biblio->syncPermissions([
+            'voir-catégories',
+            'gérer-catégories',
+            'voir-auteurs',
+            'gérer-auteurs',
             'voir-livres',
             'gérer-livres',
             'gérer-emprunts',

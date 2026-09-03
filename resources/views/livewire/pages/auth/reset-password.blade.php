@@ -110,7 +110,8 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div class="space-y-6">
+@section('title', config('app.name') . ' | ' . __('Reset password'))
+    <div class="space-y-6">
     <!-- En-tête -->
     <div class="text-center">
         <div class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">

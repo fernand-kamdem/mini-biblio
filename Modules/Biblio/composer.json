@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/biblio",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Biblio\\": "app/",
+            "Modules\\Biblio\\Database\\Factories\\": "database/factories/",
+            "Modules\\Biblio\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Biblio\\Tests\\": "tests/"
+        }
+    }
+}

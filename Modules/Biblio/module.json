@@ -1,0 +1,11 @@
+{
+    "name": "Biblio",
+    "alias": "biblio",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Biblio\\Providers\\BiblioServiceProvider"
+    ],
+    "files": []
+}
