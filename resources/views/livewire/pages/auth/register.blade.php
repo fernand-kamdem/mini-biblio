@@ -70,12 +70,15 @@ new #[Layout('layouts.guest')] class extends Component
         $validated['password'] = Hash::make($validated['password']);
 
         event(new Registered($user = User::create($validated)));
+        $user->assignRole('MEMBRE');
 
         Auth::login($user);
 
         $this->redirect(route('dashboard', absolute: false), navigate: true);
     }
 }; ?>
+
+@section('title', config('app.name') . ' | ' . __('Register'))
 
 <div class="space-y-6">
     <!-- En-tête -->

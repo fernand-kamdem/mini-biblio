@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/emprunt",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Emprunt\\": "app/",
+            "Modules\\Emprunt\\Database\\Factories\\": "database/factories/",
+            "Modules\\Emprunt\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Emprunt\\Tests\\": "tests/"
+        }
+    }
+}

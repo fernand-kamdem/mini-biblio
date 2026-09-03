@@ -14,13 +14,16 @@
 - [Règles de gestion](#règles-de-gestion)
 - [Diagramme UML](#diagramme-uml)
 - [Relations Eloquent](#relations-eloquent)
-- [Workflow des emprunts](#workflow-des-emprunts)
+- [Workflow des emprunts (Symfony Workflow)](#workflow-des-emprunts-symfony-workflow)
 - [Rôles et permissions (Spatie)](#rôles-et-permissions-spatie)
 - [Authentification (Breeze)](#authentification-breeze)
 - [Composants Livewire](#composants-livewire)
 - [Emails](#emails)
 - [SoftDeletes](#softdeletes)
+- [État d'avancement](#état-davancement)
 - [Ordre d'implémentation](#ordre-dimplémentation)
+- Playbooks auth : [docs/README.md](./docs/README.md)
+- Playbook workflow Emprunt : [docs/07-feat-module-emprunt-workflow.md](./docs/07-feat-module-emprunt-workflow.md)
 
 ---
 
@@ -49,8 +52,20 @@ Starter kit officiel **Laravel 13 + Livewire**. Auth : Breeze **Livewire** (pas 
 | Package | Version visée | Rôle | Note |
 |---------|---------------|------|------|
 | `anhskohbo/no-captcha` | ^3.8 | reCAPTCHA sur le login | Conflit avec Guzzle 8 (`no-captcha` exige Guzzle ^6\|^7). À installer plus tard en pinant Guzzle `^7.9`, ou valider reCAPTCHA via `Http`. |
-| `symfony/workflow` | ^7.0 | Machine à états des emprunts | Module Emprunt |
+| `symfony/workflow` | ^7.0 | Machine à états des emprunts | Module Emprunt — **à installer** (playbook [07](./docs/07-feat-module-emprunt-workflow.md)) |
 | `laravel/reverb` | ^1.0 | WebSockets temps réel | Dashboard / stock live |
+
+---
+
+## Convention de nommage
+
+Le projet mélange **tables SQL en anglais** et **libellés métier souvent en français** (colonnes Biblio).
+
+| Couche | Exemple |
+|--------|---------|
+| Tables | `users`, `members`, `emprunts`, `books`, `authors`, `categories` |
+| Modèles | `User`, `Member`, `Emprunt`, `Book`, `Author`, `Category` |
+| Profil membre | Données identité sur `User` (`name`, `email`) ; données bibliothèque sur `Member` (`card_number`, `phone`, …) |
 
 ---
 
@@ -59,36 +74,36 @@ Starter kit officiel **Laravel 13 + Livewire**. Auth : Breeze **Livewire** (pas 
 ```
 app/
   Models/
-    User.php                        ← HasOne Membre, HasRoles (Spatie)
+    User.php                        ← hasOne Member, empruntsApprouves(), HasRoles (Spatie)
   Events/
-    EmpruntSoumis.php               ← broadcast → canal 'bibliothecaire'
-    EmpruntApprouve.php             ← broadcast → canal 'membre.{id}'
-    EmpruntRefuse.php               ← broadcast → canal 'membre.{id}'
-    StockMisAJour.php               ← broadcast → canal public 'livres'
+    EmpruntSoumis.php               ← broadcast → canal 'bibliothecaire' (à créer)
+    EmpruntApprouve.php             ← broadcast → canal 'membre.{id}' (à créer)
+    EmpruntRefuse.php               ← broadcast → canal 'membre.{id}' (à créer)
+    StockMisAJour.php               ← broadcast → canal public 'livres' (à créer)
   Mail/
-    BienvenueMail.php               ← envoyé à l'inscription
-    EmpruntApprouveMail.php         ← envoyé au membre à l'approbation
-    EmpruntRefuseMail.php           ← envoyé au membre au refus
-    RappelRetardMail.php            ← envoyé par le scheduler
+    BienvenueMail.php               ← envoyé à l'inscription (à créer)
+    EmpruntApprouveMail.php         ← envoyé au membre à l'approbation (à créer)
+    EmpruntRefuseMail.php           ← envoyé au membre au refus (à créer)
+    RappelRetardMail.php            ← envoyé par le scheduler (à créer)
   Observers/
-    EmpruntObserver.php             ← déclenche Events + Mails selon statut
-    MembreObserver.php              ← crée Membre + assigne rôle + envoie Bienvenue
+    EmpruntObserver.php             ← déclenche Events + Mails selon statut (à créer)
+    MemberObserver.php              ← crée Member + card_number + email Bienvenue (à créer)
   Console/
     Commands/
-      CheckRetardsCommand.php       ← commande schedulée quotidienne
+      CheckRetardsCommand.php       ← commande schedulée quotidienne (à créer)
 
 Modules/
   Biblio/                           ← Gestion du catalogue
     app/
       Models/
-        Auteur.php
-        Categorie.php
-        Livre.php
+        Author.php
+        Category.php
+        Book.php
       Livewire/
-        LivreList.php               ← liste paginée + recherche wire:model.live
-        LivreForm.php               ← ajout / édition (modal)
-        AuteurForm.php
-        CategorieForm.php
+        BookList.php                ← liste paginée + recherche wire:model.live
+        BookForm.php                ← ajout / édition (modal)
+        AuthorForm.php
+        CategoryForm.php
       Http/Controllers/
         BiblioController.php        ← mince, return view uniquement
       Providers/
@@ -98,36 +113,40 @@ Modules/
     database/
       migrations/
         create_categories_table.php
-        create_auteurs_table.php
-        create_livres_table.php
-        create_auteur_livre_table.php
+        create_authors_table.php
+        create_books_table.php
+        create_author_book_table.php
       seeders/
         BiblioSeeder.php
 
   Emprunt/                          ← Gestion des emprunts + workflow
     app/
       Models/
-        Membre.php
+        Member.php                  ← profil bibliothèque (identité via User)
         Emprunt.php
       Enums/
-        StatutEmprunt.php           ← brouillon, en_attente, approuve, refuse, rendu
+        StatutEmprunt.php           ← brouillon, en_attente, approuve, refuse, rendu ✅
+      Services/
+        EmpruntWorkflowService.php  ← transitions + RG + stock (à créer)
       Livewire/
-        EmpruntList.php             ← mes emprunts (membre) ou tous (admin/biblio)
-        EmpruntForm.php             ← choisir livre + soumettre demande
-        TableauDeBord.php           ← stats + demandes en attente (temps réel Reverb)
+        EmpruntList.php             ← mes emprunts (membre) ou tous (admin/biblio) (à créer)
+        EmpruntForm.php             ← choisir livre + soumettre demande (à créer)
+        TableauDeBord.php           ← stats + demandes en attente (à créer)
       Http/Controllers/
         EmpruntController.php
       Providers/
-        EmpruntServiceProvider.php
+        EmpruntServiceProvider.php  ← enregistrer workflow Symfony (à compléter)
       routes/
         web.php
     database/
       migrations/
-        create_membres_table.php
-        create_emprunts_table.php
+        create_members_table.php    ✅
+        create_emprunts_table.php   ✅
       seeders/
         EmpruntSeeder.php
-        RolesPermissionsSeeder.php
+
+config/
+  workflow.php                      ← définition state machine emprunt (à créer)
 ```
 
 ---
@@ -147,18 +166,18 @@ Modules/
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
 
-### `membres`
+### `members`
+
+Profil **bibliothèque** lié à un `User`. L'identité (`name`, `email`) reste sur `users` — pas de duplication `nom` / `prenom`.
+
 | Colonne | Type | Contrainte |
 |---------|------|------------|
 | `id` | bigint | PK |
-| `user_id` | bigint | FK → `users.id` NOT NULL |
-| `numero_carte` | string | UNIQUE (MB-XXXXX) |
-| `nom` | string | NOT NULL |
-| `prenom` | string | NOT NULL |
-| `telephone` | string | nullable |
-| `adresse` | text | nullable |
-| `date_inscription` | date | NOT NULL |
-| `est_actif` | boolean | default `true` |
+| `user_id` | bigint | FK → `users.id`, UNIQUE (RG-01), cascade on hard delete |
+| `card_number` | string | UNIQUE (ex. `MB-00001`) |
+| `phone` | string | UNIQUE, nullable |
+| `address` | string | nullable |
+| `registration_date` | date | NOT NULL |
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
 
@@ -171,7 +190,10 @@ Modules/
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
 
-### `auteurs`
+### `authors`
+
+Table SQL `authors` — modèle `Author`.
+
 | Colonne | Type | Contrainte |
 |---------|------|------------|
 | `id` | bigint | PK |
@@ -181,11 +203,14 @@ Modules/
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
 
-### `livres`
+### `books`
+
+Table SQL `books` — modèle `Book`. FK `category_id` → `categories.id`.
+
 | Colonne | Type | Contrainte |
 |---------|------|------------|
 | `id` | bigint | PK |
-| `categorie_id` | bigint | FK → `categories.id` NOT NULL |
+| `category_id` | bigint | FK → `categories.id` NOT NULL |
 | `titre` | string | NOT NULL |
 | `isbn` | string | UNIQUE nullable |
 | `annee_parution` | integer | nullable |
@@ -195,26 +220,27 @@ Modules/
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
 
-### `auteur_livre` *(pivot N-N)*
+### `author_book` *(pivot N-N)*
+
 | Colonne | Type | Contrainte |
 |---------|------|------------|
-| `auteur_id` | bigint | FK → `auteurs.id` |
-| `livre_id` | bigint | FK → `livres.id` |
+| `author_id` | bigint | FK → `authors.id` |
+| `book_id` | bigint | FK → `books.id` |
 
 ### `emprunts`
 | Colonne | Type | Contrainte |
 |---------|------|------------|
 | `id` | bigint | PK |
-| `membre_id` | bigint | FK → `membres.id` NOT NULL |
-| `livre_id` | bigint | FK → `livres.id` NOT NULL |
-| `statut` | enum | `brouillon\|en_attente\|approuve\|refuse\|rendu` |
-| `workflow_state` | string | default `'brouillon'` |
+| `member_id` | bigint | FK → `members.id` NOT NULL, restrict on delete |
+| `book_id` | bigint | FK → `books.id` NOT NULL, restrict on delete |
+| `statut` | enum | `brouillon\|en_attente\|approuve\|refuse\|rendu` — cast `StatutEmprunt` |
+| `workflow_state` | string | default `'brouillon'` — marking Symfony Workflow |
 | `date_emprunt` | date | nullable |
 | `date_retour_prevue` | date | nullable |
 | `date_retour_reelle` | date | nullable |
 | `approuve_par` | bigint | FK → `users.id` nullable |
 | `note_membre` | text | nullable |
-| `note_bibliothecaire` | text | nullable |
+| `note_bibliotécaire` | text | nullable |
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
 
@@ -224,19 +250,19 @@ Modules/
 
 | Code | Règle |
 |------|-------|
-| **RG-01** | Un `User` possède **au plus un** `Membre` (créé automatiquement à l'inscription via Observer) |
-| **RG-02** | Un `Membre` peut avoir **zéro ou plusieurs** `Emprunts` |
-| **RG-03** | Un `Emprunt` concerne **exactement un** `Livre` et **exactement un** `Membre` |
-| **RG-04** | Un `Livre` appartient **obligatoirement** à **une seule** `Categorie` |
-| **RG-05** | Une `Categorie` peut contenir **zéro ou plusieurs** `Livres` |
-| **RG-06** | Un `Livre` peut avoir **un ou plusieurs** `Auteurs` ; un `Auteur` peut avoir **un ou plusieurs** `Livres` (N-N via pivot) |
-| **RG-07** | Le `stock_disponible` d'un `Livre` **diminue de 1** à chaque emprunt approuvé |
+| **RG-01** | Un `User` possède **au plus un** `Member` (création automatique à l'inscription via `MemberObserver`) |
+| **RG-02** | Un `Member` peut avoir **zéro ou plusieurs** `Emprunts` |
+| **RG-03** | Un `Emprunt` concerne **exactement un** `Book` et **exactement un** `Member` |
+| **RG-04** | Un `Book` appartient **obligatoirement** à **une seule** `Category` |
+| **RG-05** | Une `Category` peut contenir **zéro ou plusieurs** `Books` |
+| **RG-06** | Un `Book` peut avoir **un ou plusieurs** `Authors` ; un `Author` peut avoir **un ou plusieurs** `Books` (N-N via pivot `author_book`) |
+| **RG-07** | Le `stock_disponible` d'un `Book` **diminue de 1** à chaque emprunt approuvé |
 | **RG-08** | Le `stock_disponible` **augmente de 1** quand l'emprunt passe à l'état `rendu` |
-| **RG-09** | Un emprunt ne peut être créé que si `stock_disponible > 0` |
-| **RG-10** | Un `Membre` soft-deleté ne peut plus emprunter |
-| **RG-11** | Un `Livre` soft-deleté ne peut plus faire l'objet d'un nouvel emprunt |
+| **RG-09** | Un emprunt ne peut être soumis (`demander`) que si `stock_disponible > 0` |
+| **RG-10** | Un membre inactif ne peut plus emprunter : `Member` ou `User` soft-deleted, ou `User.is_active = false` |
+| **RG-11** | Un `Book` soft-deleted ne peut plus faire l'objet d'un nouvel emprunt |
 | **RG-12** | Seul un `BIBLIOTHECAIRE` ou `ADMIN` peut approuver / refuser / valider le retour |
-| **RG-13** | Seul le `Membre` propriétaire peut annuler un emprunt en état `en_attente` |
+| **RG-13** | Seul le `Member` propriétaire peut annuler un emprunt en état `en_attente` |
 | **RG-14** | La `date_retour_prevue` est fixée à **+14 jours** depuis `date_emprunt` |
 | **RG-15** | Un emprunt est **en retard** si `date_retour_prevue < aujourd'hui` et `statut = approuve` |
 
@@ -247,11 +273,11 @@ Modules/
 ```mermaid
 erDiagram
 
-    users ||--o| membres : "1 => 0..1 (RG-01)"
-    membres ||--o{ emprunts : "1 => 0..N (RG-02)"
-    livres ||--o{ emprunts : "1 => 0..N (RG-03)"
-    categories ||--o{ livres : "1 => 0..N (RG-05)"
-    livres }o--o{ auteurs : "N <=> N (RG-06)"
+    users ||--o| members : "1 => 0..1 (RG-01)"
+    members ||--o{ emprunts : "1 => 0..N (RG-02)"
+    books ||--o{ emprunts : "1 => 0..N (RG-03)"
+    categories ||--o{ books : "1 => 0..N (RG-05)"
+    books }o--o{ authors : "N <=> N (RG-06)"
     users ||--o{ emprunts : "1 approbateur => 0..N (RG-12)"
 
     users {
@@ -264,16 +290,14 @@ erDiagram
         timestamp deleted_at "SoftDelete"
     }
 
-    membres {
+    members {
         bigint id PK
-        bigint user_id FK "NOT NULL - RG-01"
-        string numero_carte UK "MB-XXXXX"
-        string nom "NOT NULL"
-        string prenom "NOT NULL"
-        string telephone "nullable"
-        date date_inscription "NOT NULL"
-        boolean est_actif "default true - RG-10"
-        timestamp deleted_at "SoftDelete"
+        bigint user_id FK "UNIQUE - RG-01"
+        string card_number UK "MB-XXXXX"
+        string phone "nullable"
+        string address "nullable"
+        date registration_date "NOT NULL"
+        timestamp deleted_at "SoftDelete - RG-10"
     }
 
     categories {
@@ -283,7 +307,7 @@ erDiagram
         timestamp deleted_at "SoftDelete"
     }
 
-    auteurs {
+    authors {
         bigint id PK
         string nom "NOT NULL"
         string prenom "NOT NULL"
@@ -291,9 +315,9 @@ erDiagram
         timestamp deleted_at "SoftDelete"
     }
 
-    livres {
+    books {
         bigint id PK
-        bigint categorie_id FK "NOT NULL - RG-04"
+        bigint category_id FK "NOT NULL - RG-04"
         string titre "NOT NULL"
         string isbn UK "nullable"
         int annee_parution "nullable"
@@ -303,15 +327,15 @@ erDiagram
         timestamp deleted_at "SoftDelete - RG-11"
     }
 
-    auteur_livre {
-        bigint auteur_id FK
-        bigint livre_id FK
+    author_book {
+        bigint author_id FK
+        bigint book_id FK
     }
 
     emprunts {
         bigint id PK
-        bigint membre_id FK "NOT NULL - RG-02 RG-03"
-        bigint livre_id FK "NOT NULL - RG-03"
+        bigint member_id FK "NOT NULL - RG-02 RG-03"
+        bigint book_id FK "NOT NULL - RG-03"
         enum statut "brouillon|en_attente|approuve|refuse|rendu"
         string workflow_state "default brouillon"
         date date_emprunt "nullable"
@@ -327,12 +351,12 @@ erDiagram
 ### Cardinalités récapitulées
 
 ```
-users          1 ──────────── 0..1   membres
-membres        1 ──────────── 0..*   emprunts
-livres         1 ──────────── 0..*   emprunts
-categories     1 ──────────── 0..*   livres
-livres       0..* ──────────── 0..*  auteurs   (via auteur_livre)
-users          1 ──────────── 0..*   emprunts  (approbateur)
+users          1 ──────────── 0..1   members
+members        1 ──────────── 0..*   emprunts
+books          1 ──────────── 0..*   emprunts
+categories     1 ──────────── 0..*   books
+books        0..* ──────────── 0..*  authors   (via author_book)
+users          1 ──────────── 0..*   emprunts  (approbateur, clé approuve_par)
 ```
 
 ---
@@ -341,22 +365,38 @@ users          1 ──────────── 0..*   emprunts  (approbat
 
 | Modèle | Méthode | Type | Vers |
 |--------|---------|------|------|
-| `User` | `membre()` | `hasOne` | `Membre` |
-| `Membre` | `user()` | `belongsTo` | `User` |
-| `Membre` | `emprunts()` | `hasMany` | `Emprunt` |
-| `Emprunt` | `membre()` | `belongsTo` | `Membre` |
-| `Emprunt` | `livre()` | `belongsTo` | `Livre` |
+| `User` | `member()` | `hasOne` | `Member` |
+| `User` | `empruntsApprouves()` | `hasMany` | `Emprunt` (clé `approuve_par`) |
+| `Member` | `user()` | `belongsTo` | `User` |
+| `Member` | `emprunts()` | `hasMany` | `Emprunt` |
+| `Emprunt` | `member()` | `belongsTo` | `Member` |
+| `Emprunt` | `book()` | `belongsTo` | `Book` |
 | `Emprunt` | `approbateur()` | `belongsTo` | `User` (clé `approuve_par`) |
-| `Livre` | `emprunts()` | `hasMany` | `Emprunt` |
-| `Livre` | `categorie()` | `belongsTo` | `Categorie` |
-| `Livre` | `auteurs()` | `belongsToMany` | `Auteur` (pivot `auteur_livre`) |
-| `Categorie` | `livres()` | `hasMany` | `Livre` |
-| `Categorie` | `emprunts()` | `hasManyThrough` | `Emprunt` via `Livre` |
-| `Auteur` | `livres()` | `belongsToMany` | `Livre` (pivot `auteur_livre`) |
+| `Book` | `emprunts()` | `hasMany` | `Emprunt` |
+| `Book` | `category()` | `belongsTo` | `Category` |
+| `Book` | `authors()` | `belongsToMany` | `Author` (pivot `author_book`) |
+| `Category` | `books()` | `hasMany` | `Book` |
+| `Author` | `books()` | `belongsToMany` | `Book` (pivot `author_book`) |
 
 ---
 
 ## Workflow des emprunts (Symfony Workflow)
+
+> **Playbook détaillé :** [docs/07-feat-module-emprunt-workflow.md](./docs/07-feat-module-emprunt-workflow.md)
+
+Chaque emprunt est une **state machine** : seules les transitions définies sont autorisées. Symfony Workflow valide les états ; le service métier applique les RG (stock, dates, permissions).
+
+### États (`StatutEmprunt`)
+
+| Valeur | Description |
+|--------|-------------|
+| `brouillon` | Demande créée, pas encore soumise |
+| `en_attente` | Soumise, en attente d'approbation bibliothécaire |
+| `approuve` | Validée, livre retiré du stock |
+| `refuse` | Refusée par le bibliothécaire |
+| `rendu` | Livre rendu, stock réincrémenté (état terminal) |
+
+### Diagramme
 
 ```
                   ┌─────────────┐
@@ -381,13 +421,59 @@ users          1 ──────────── 0..*   emprunts  (approbat
               └─────────┘
 ```
 
-| Transition | De | Vers | Qui déclenche |
-|------------|----|------|---------------|
-| `demander` | brouillon | en_attente | MEMBRE |
-| `approuver` | en_attente | approuve | BIBLIOTHECAIRE, ADMIN |
-| `refuser` | en_attente | refuse | BIBLIOTHECAIRE, ADMIN |
-| `rendre` | approuve | rendu | BIBLIOTHECAIRE, ADMIN |
-| `annuler` | en_attente | brouillon | MEMBRE (propriétaire uniquement) |
+### Transitions
+
+| Transition | De | Vers | Permission Spatie | Acteur |
+|------------|-----|------|-------------------|--------|
+| `demander` | brouillon | en_attente | `créer-emprunt` | MEMBRE |
+| `approuver` | en_attente | approuve | `approuver-emprunt` | BIBLIOTHECAIRE, ADMIN |
+| `refuser` | en_attente | refuse | `refuser-emprunt` | BIBLIOTHECAIRE, ADMIN |
+| `rendre` | approuve | rendu | `valider-retour` | BIBLIOTHECAIRE, ADMIN |
+| `annuler` | en_attente | brouillon | `annuler-emprunt` | MEMBRE (propriétaire, RG-13) |
+
+### Effets métier par transition
+
+| Transition | Effets (dans `EmpruntWorkflowService`, transaction DB) |
+|------------|--------------------------------------------------------|
+| `demander` | Vérifier stock (RG-09), membre actif (RG-10), livre non supprimé (RG-11) |
+| `approuver` | `stock_disponible--` (RG-07), `date_emprunt`, `date_retour_prevue` +14j (RG-14), `approuve_par` |
+| `refuser` | Optionnel : `note_bibliotécaire`, `approuve_par` |
+| `rendre` | `stock_disponible++` (RG-08), `date_retour_reelle` |
+| `annuler` | Vérifier propriétaire (RG-13) |
+
+### `statut` vs `workflow_state`
+
+| Colonne | Rôle |
+|---------|------|
+| `workflow_state` | Marking Symfony (`getWorkflowState()` / `setWorkflowState()`) |
+| `statut` | Valeur métier castée en enum `StatutEmprunt` (UI, requêtes, observers) |
+
+Les deux colonnes sont **synchronisées** dans `Emprunt::setWorkflowState()` — ne jamais les modifier directement depuis Livewire.
+
+### Architecture
+
+```
+Livewire (EmpruntForm / EmpruntList)
+        ↓
+EmpruntWorkflowService     ← Spatie + RG + stock + dates
+        ↓
+Symfony Workflow           ← can() / apply()
+        ↓
+Emprunt::save()
+        ↓
+EmpruntObserver            ← mails, events Reverb
+```
+
+### Fichiers workflow
+
+| Fichier | Statut |
+|---------|--------|
+| `Modules/Emprunt/app/Enums/StatutEmprunt.php` | ✅ |
+| `Modules/Emprunt/app/Models/Emprunt.php` (getters/setters) | ✅ |
+| `config/workflow.php` | ⬜ à créer |
+| `EmpruntServiceProvider` (binding DI) | ⬜ à compléter |
+| `Modules/Emprunt/app/Services/EmpruntWorkflowService.php` | ⬜ à créer |
+| `symfony/workflow` dans `composer.json` | ⬜ à installer |
 
 ---
 
@@ -403,30 +489,30 @@ users          1 ──────────── 0..*   emprunts  (approbat
 
 ## Authentification (Breeze)
 
-Toutes les fonctionnalités Breeze sont incluses :
+Auth **Livewire Volt** (`resources/views/livewire/pages/auth/`), layout `layouts.auth`. Détail branche par branche : [docs/README.md](./docs/README.md).
 
-| Fonctionnalité | Route |
-|----------------|-------|
-| Connexion + reCAPTCHA | `GET/POST /login` |
-| Inscription | `GET/POST /register` |
-| Vérification email | `GET /verify-email` |
-| Mot de passe oublié | `GET/POST /forgot-password` |
-| Réinitialisation MDP | `GET/POST /reset-password/{token}` |
-| Confirmation MDP | `GET/POST /confirm-password` |
-| Remember me | checkbox dans le formulaire login |
-| Déconnexion | `POST /logout` |
+| Fonctionnalité | Route | Nom |
+|----------------|-------|-----|
+| Connexion + remember | `GET /login` | `login` |
+| Inscription | `GET /register` | `register` |
+| Vérification email | `GET /verify-email` | `verification.notice` |
+| Mot de passe oublié | `GET /forgot-password` | `password.request` |
+| Réinitialisation MDP | `GET /reset-password/{token}` | `password.reset` |
+| Confirmation MDP (connecté) | `GET /confirm-password` | `password.confirm` |
+
+reCAPTCHA et SSO Microsoft **pas** installés. Les soumissions passent par Livewire (`wire:submit`), pas par des contrôleurs Breeze Blade.
 
 ### Flow inscription → profil membre
 
 ```
 1. /register → saisit nom, email, password
 2. Email de vérification envoyé (Breeze natif)
-3. MembreObserver::created() déclenché automatiquement
-   → Membre créé (numero_carte: MB-00001)
-   → Rôle MEMBRE assigné (Spatie)
+3. Rôle MEMBRE assigné (Spatie) — ✅ fait dans register Volt
+4. MemberObserver::created() (à créer)
+   → Member créé (card_number: MB-00001, registration_date)
    → Email BienvenueMail envoyé
-4. Clic sur lien → email vérifié
-5. Redirigé vers /dashboard
+5. Clic sur lien → email vérifié
+6. Redirigé vers /dashboard
 ```
 
 ---
@@ -534,13 +620,51 @@ BROADCAST_CONNECTION=reverb
 
 ---
 
+## État d'avancement
+
+Dernière mise à jour : **2026-09-01**.
+
+### Auth & socle ✅
+
+| Élément | Statut |
+|---------|--------|
+| Breeze Livewire + Volt | ✅ |
+| Spatie rôles / permissions | ✅ |
+| `User` : SoftDeletes, `is_active`, HasRoles | ✅ |
+| i18n auth (FR/EN) | ✅ |
+| Inscription + rôle MEMBRE | ✅ |
+
+### Module Biblio 🟡
+
+| Élément | Statut |
+|---------|--------|
+| Migrations (`books`, `authors`, `categories`, pivot) | ✅ |
+| Modèles + relations | ✅ |
+| Livewire (listes, formulaires) | 🟡 en cours |
+
+### Module Emprunt 🟡
+
+| Élément | Statut |
+|---------|--------|
+| Migrations `members`, `emprunts` | ✅ |
+| Modèles `Member`, `Emprunt` + relations croisées | ✅ |
+| Enum `StatutEmprunt` + sync workflow | ✅ |
+| Symfony Workflow (`config`, service) | ⬜ prochaine session |
+| Livewire `EmpruntForm`, `EmpruntList` | ⬜ |
+| Observers + Mails | ⬜ |
+| Reverb temps réel | ⬜ |
+
+**Suite demain :** installer `symfony/workflow`, créer `config/workflow.php` et `EmpruntWorkflowService` — voir [docs/07-feat-module-emprunt-workflow.md](./docs/07-feat-module-emprunt-workflow.md).
+
+---
+
 ## Ordre d'implémentation
 
 ### Étape 1 — Socle
 1. `laravel new mini-biblio`
 2. Installer les packages (`composer require`, `npm install`)
-3. Configurer `.env` (DB, Mail, reCAPTCHA, Reverb)
-4. `php artisan breeze:install` (stack Blade)
+3. Configurer `.env` (DB, Mail ; reCAPTCHA / Reverb plus tard)
+4. `php artisan breeze:install livewire --pest` (pas la stack Blade)
 5. `php artisan migrate`
 
 ### Étape 2 — Spatie + rôles
@@ -557,35 +681,38 @@ BROADCAST_CONNECTION=reverb
 14. Enregistrement dans `BiblioServiceProvider`
 
 ### Étape 4 — Module Emprunt
-15. `php artisan module:make Emprunt`
-16. Migrations : `membres`, `emprunts`
-17. Modèles + relations + `hasManyThrough`
-18. `Enum StatutEmprunt`
-19. `config/workflow.php` — définir les transitions
-20. Livewire `EmpruntForm` + `EmpruntList` + `TableauDeBord`
-21. Enregistrement dans `EmpruntServiceProvider`
+15. `php artisan module:make Emprunt` ✅
+16. Migrations : `members`, `emprunts` ✅
+17. Modèles + relations + enum `StatutEmprunt` ✅
+18. `composer require symfony/workflow` ⬜
+19. `config/workflow.php` — définir les transitions ⬜
+20. `EmpruntWorkflowService` — RG + stock + permissions ⬜
+21. Livewire `EmpruntForm` + `EmpruntList` + `TableauDeBord` ⬜
+22. Enregistrement workflow dans `EmpruntServiceProvider` ⬜
+
+> Détail : [docs/07-feat-module-emprunt-workflow.md](./docs/07-feat-module-emprunt-workflow.md)
 
 ### Étape 5 — Observers + Mail
-22. `MembreObserver` (création profil + rôle + email Bienvenue)
-23. `EmpruntObserver` (events Reverb + emails selon transition)
-24. Classes `Mailable` + templates Blade email
-25. `CheckRetardsCommand` + `scheduler`
+23. `MemberObserver` (création profil + card_number + email Bienvenue)
+24. `EmpruntObserver` (events Reverb + emails selon transition)
+25. Classes `Mailable` + templates Blade email
+26. `CheckRetardsCommand` + `scheduler`
 
 ### Étape 6 — Reverb
-26. `php artisan reverb:install`
-27. Créer les `Event` broadcastables
-28. Brancher `#[On('echo:...')]` dans les composants Livewire
+27. `php artisan reverb:install`
+28. Créer les `Event` broadcastables
+29. Brancher `#[On('echo:...')]` dans les composants Livewire
 
 ### Étape 7 — Auth + reCAPTCHA
-29. Modifier `login.blade.php` : ajouter `{!! NoCaptcha::display() !!}`
-30. Modifier `AuthenticatedSessionController` : valider `g-recaptcha-response`
-31. Ajouter `MustVerifyEmail` dans `User.php`
+30. Modifier `login.blade.php` : ajouter `{!! NoCaptcha::display() !!}`
+31. Modifier `AuthenticatedSessionController` : valider `g-recaptcha-response`
+32. Ajouter `MustVerifyEmail` dans `User.php`
 
 ### Étape 8 — Finitions
-32. Layout principal avec sidebar + `@can(...)`
-33. `@livewireStyles` / `@livewireScripts` dans le layout
-34. Seeders de données de test
-35. Vérification des RG dans les composants Livewire
+33. Layout principal avec sidebar + `@can(...)`
+34. `@livewireStyles` / `@livewireScripts` dans le layout
+35. Seeders de données de test
+36. Vérification des RG dans les composants Livewire
 
 ---
 
