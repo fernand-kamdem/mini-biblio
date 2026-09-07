@@ -46,18 +46,61 @@
             <!-- Séparateur -->
             <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
-            <!-- Profil utilisateur -->
-            <div class="flex items-center gap-2 cursor-pointer group">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
-                    {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'U' }}
+            <!-- Profil utilisateur avec menu déroulant -->
+            <div class="relative" x-data="{ open: false }">
+                <div class="flex items-center gap-2 cursor-pointer group" @click="open = !open">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                        {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'U' }}
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+                            {{ auth()->user() ? auth()->user()->name : 'Utilisateur' }}
+                        </p>
+                        <p class="text-xs text-gray-500">{{ auth()->user() ? auth()->user()->email : '' }}</p>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 group-hover:text-gray-600 transition-colors hidden sm:block" 
+                       :class="open ? 'rotate-180' : ''"></i>
                 </div>
-                <div class="hidden sm:block">
-                    <p class="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
-                        {{ auth()->user() ? auth()->user()->name : 'Utilisateur' }}
-                    </p>
-                    <p class="text-xs text-gray-500">{{ auth()->user() ? auth()->user()->email : '' }}</p>
+
+                <!-- Menu déroulant -->
+                <div x-show="open" 
+                     @click.away="open = false"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50 origin-top-right">
+                    
+                    <!-- En-tête du menu -->
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <p class="text-sm font-semibold text-gray-900">{{ auth()->user() ? auth()->user()->name : 'Utilisateur' }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ auth()->user() ? auth()->user()->email : '' }}</p>
+                    </div>
+
+                    <!-- Liens du menu -->
+                    <div class="py-1">
+                        <a href="{{ route('profile') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
+                            <i class="fas fa-user-circle w-4 text-gray-400"></i>
+                            {{ __('Profile') }}
+                        </a>
+                    </div>
+
+                    <!-- Séparateur -->
+                    <div class="border-t border-gray-100"></div>
+
+                    <!-- Déconnexion -->
+                    <div class="py-1">
+                        <form method="POST" action="{{ route('logout') }}" class="block">
+                            @csrf
+                            <button type="submit" class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors">
+                                <i class="fas fa-sign-out-alt w-4 text-red-400"></i>
+                                {{ __('Logout') }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <i class="fas fa-chevron-down text-xs text-gray-400 group-hover:text-gray-600 transition-colors hidden sm:block"></i>
             </div>
         </div>
     </div>
