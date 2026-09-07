@@ -17,7 +17,7 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-Commentaire : `default(true)` = tout nouveau membre est actif. Un admin pourra passer à `false`.
+`default(true)` : tout nouveau membre est actif. Un admin pourra passer à `false`.
 
 ### `database/migrations/xxxx_add_soft_deletes_to_users_table.php`
 
@@ -27,15 +27,15 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-Commentaire : suppression douce (README mini-biblio). **Ne pas** ajouter `username` unique ici (casse register + factory).
+Suppression douce (README mini-biblio). **Ne pas** ajouter `username` unique ici (casse register + factory).
 
 ### `app/Http/Middleware/IsActive.php`
 
 Ordre **obligatoire** :
 
-1. `if (! Auth::check())` ? `$next` (sinon crash visiteur : `user()` est `null`)
-2. `if (Auth::user()->is_active ?? true)` ? `$next` (`?? true` : `null` ? désactivé, utile avec `actingAs` / factory)
-3. sinon `logout()` + redirect `login` + flash `error`
+1. Si `! Auth::check()` ? `$next` (sinon crash visiteur : `user()` est `null`)
+2. Si `Auth::user()->is_active ?? true` ? `$next` (`?? true` : `null` n’est pas traité comme désactivé, utile avec `actingAs` / factory)
+3. Sinon `logout()` + redirect `login` + flash `error`
 
 Ne **pas** lire `Auth::user()->is_active` **avant** `Auth::check()`.
 
@@ -68,7 +68,7 @@ Voir le fichier actuel du repo pour le code commenté complet.
 'is_active' => true,
 ```
 
-**Indispensable** : `actingAs($user)` réutilise le modèle **en mémoire**. Sans `is_active`, la valeur est `null` ? cast boolean `false` ? `IsActive` redirige en 302 ? tests dashboard / verify-email / confirm-password **rouges**.
+**Indispensable** : `actingAs($user)` réutilise le modèle **en mémoire**. Sans `is_active`, la valeur est `null` ; le cast boolean peut donner `false` ; `IsActive` redirige en 302 ; tests dashboard / verify-email / confirm-password **rouges**.
 
 Option :
 
@@ -89,7 +89,7 @@ Sous le status Breeze, afficher le flash du middleware :
 @endif
 ```
 
-Commentaire : `IsActive` envoie `session('error')`, Breeze n’affiche que `session('status')`.
+`IsActive` envoie `session('error')`, Breeze n’affiche que `session('status')`.
 
 ### `app/Livewire/Forms/LoginForm.php`
 

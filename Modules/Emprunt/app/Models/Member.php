@@ -42,6 +42,23 @@ class Member extends Model
         return $this->hasMany(Emprunt::class);
     }
 
+    public static function generateCardNumber(): string
+    {
+        $year = now()->year;
+        $prefix = "MB-{$year}-";
+
+        $last = Member::withTrashed()
+            ->where('card_number', 'like', $prefix.'%')
+            ->orderByDesc('card_number')
+            ->value('card_number');
+
+        $next = $last
+            ? ((int) substr($last, -5)) + 1
+            : 1;
+
+        return $prefix.str_pad((string) $next, 5, '0', STR_PAD_LEFT);
+    }
+
 
     // protected static function newFactory(): MemberFactory
     // {

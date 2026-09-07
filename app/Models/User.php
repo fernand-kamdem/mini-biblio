@@ -30,7 +30,7 @@ use Modules\Emprunt\Models\Emprunt;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'is_active', 'language'])]
+#[Fillable(['name', 'email', 'password', 'is_active', 'email_verified_at', 'language'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {

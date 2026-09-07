@@ -45,7 +45,8 @@ Ne pas `composer require anhskohbo/no-captcha` tant que Guzzle 8 est là.
 | Rôle MEMBRE à l'inscription (Volt) | `MemberObserver`, Livewire, Mails |
 | | Reverb (plus tard) |
 
-Playbook détaillé : **[07-feat-module-emprunt-workflow.md](./07-feat-module-emprunt-workflow.md)**.
+Playbook détaillé : **[07-feat-module-emprunt-workflow.md](./07-feat-module-emprunt-workflow.md)**.  
+Cores Bureau (génériques) : `~/Desktop/laravel-symfony-workflow-core.md`, `~/Desktop/laravel-notifications-core.md`.
 
 ### Module Biblio
 

@@ -92,15 +92,6 @@
                 <div class="bg-white rounded-2xl shadow-xl p-8">
                     {{ $slot }}
                 </div>
-
-                <div class="mt-6 text-center text-sm text-gray-500">
-                    <p>
-                        {{ __('Need help?') }}
-                        <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                            {{ __('Contact us') }}
-                        </a>
-                    </p>
-                </div>
             </div>
         </div>
     </div>
