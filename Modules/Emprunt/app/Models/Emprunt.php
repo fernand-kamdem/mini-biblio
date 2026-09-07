@@ -54,15 +54,17 @@ class Emprunt extends Model
         return $this->belongsTo(User::class, 'approuve_par');        
     }
 
+    //methode pour lire l'etat actuel de l'objet (getter)
     public function getWorkflowState(): string
     {
         return $this->workflow_state;
     }
 
+    //methode pour ecrire l'etat actuel de l'objet (setter)
     public function setWorkflowState(string $state, array $context = []): void
     {
         $this->workflow_state = $state;
-        $this->statut = $state; 
+        $this->statut = StatutEmprunt::tryFrom($state); 
     }
 
     // protected static function newFactory(): EmpruntFactory
