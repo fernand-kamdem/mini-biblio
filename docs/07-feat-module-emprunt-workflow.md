@@ -2,6 +2,9 @@
 
 Playbook pour la **machine à états des emprunts**. Complète le README racine (section [Workflow des emprunts](../README.md#workflow-des-emprunts-symfony-workflow)).
 
+> Pattern générique (tous projets) : `~/Desktop/laravel-symfony-workflow-core.md`  
+> Mails / notifications (tous projets) : `~/Desktop/laravel-notifications-core.md`
+
 **Branche suggérée :** `feat/module-emprunt-workflow` (plusieurs commits possibles : enum → config → service → Livewire → observer).
 
 ---
@@ -45,7 +48,7 @@ Un **membre** soumet une demande ; un **bibliothécaire** ou **admin** approuve,
 | Observer membre | `app/Observers/MemberObserver.php` | 2 |
 | Observer emprunt | `app/Observers/EmpruntObserver.php` | 3 |
 | Livewire | `EmpruntForm`, `EmpruntList`, `TableauDeBord` | 3 |
-| Mails + Events | `app/Mail/`, `app/Events/` | 4 |
+| Mails + Events | `~/Desktop/laravel-notifications-core.md` | 4 |
 | Reverb (temps réel) | plus tard | 5 |
 
 ---
@@ -458,3 +461,4 @@ EmpruntObserver            ← mails, events Reverb (plus tard)
 - [README racine — Workflow](../README.md#workflow-des-emprunts-symfony-workflow)
 - [06 — Prochaines branches](./06-prochaines-branches.md)
 - [03 — Rôles Spatie](./03-feat-auth-roles-spatie.md)
+- Cores Bureau : `laravel-symfony-workflow-core.md`, `laravel-notifications-core.md`

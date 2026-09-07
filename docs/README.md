@@ -17,4 +17,7 @@ Raccourci `laravel new` : [setup_new_project.md](./setup_new_project.md).
 
 **Règle :** une branche = une feat = un commit (ou une PR) = un de ces fichiers.
 
+**Cores génériques (Bureau, hors repo) :**  
+`~/Desktop/laravel-symfony-workflow-core.md` · `~/Desktop/laravel-notifications-core.md`
+
 Référence métier : projet `easy_days_o_laravel` (Breeze Volt + middleware compte actif, **sans** copier Borex ni SSO Microsoft).
