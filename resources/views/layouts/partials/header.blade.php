@@ -40,6 +40,9 @@
                 <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-indigo-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">5</span>
             </button>
 
+            <!-- Language Switcher -->
+            <x-language-switcher />
+
             <!-- Séparateur -->
             <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
