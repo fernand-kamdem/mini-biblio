@@ -186,8 +186,8 @@ return [
 
     'attributes' => [
         // Exemple :
-        // 'email' => 'adresse e-mail',
-        // 'password' => 'mot de passe',
+         'current_password' => 'mot de passe actuel',
+         'password' => 'mot de passe',
     ],
 
 ];
