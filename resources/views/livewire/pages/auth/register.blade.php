@@ -1,12 +1,14 @@
 <?php
 
 use App\Models\User;
+use Modules\Emprunt\Models\Member;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Illuminate\Support\Facades\DB;
 
 new #[Layout('layouts.guest')] class extends Component
 {
@@ -17,6 +19,10 @@ new #[Layout('layouts.guest')] class extends Component
     public string $password = '';
 
     public string $password_confirmation = '';
+
+    public string $phone = '';
+
+    public string $address = '';
 
     public bool $showPassword = false;
 
@@ -64,17 +70,33 @@ new #[Layout('layouts.guest')] class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'phone' => ['required', 'string', 'unique:members,phone'],
+            'address' => ['nullable', 'string', 'max:255'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+        DB::transaction(function () use ($validated) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => $validated['password'], //cast 'hashed' configuré donc pas besoin de hashage
+            ]);
+            $user->assignRole('MEMBRE');
 
-        event(new Registered($user = User::create($validated)));
-        $user->assignRole('MEMBRE');
+            Member::create([
+                'user_id' => $user->id,
+                'card_number' => Member::generateCardNumber(),
+                'phone' => $validated['phone'],
+                'address' => $validated['address'] ?? null,
+                'registration_date' => now()->toDateString(),
+            ]);
 
-        Auth::login($user);
+            event(new Registered($user));
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+            Auth::login($user);
+
+            $this->redirect(route('dashboard', absolute: false), navigate: true);
+        });
     }
 }; ?>
 
@@ -91,9 +113,18 @@ new #[Layout('layouts.guest')] class extends Component
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form wire:submit="register" class="space-y-5">
-        <!-- Name -->
+        <!-- Indication des champs obligatoires -->
+        <div class="flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700 border border-blue-200">
+            <i class="fas fa-info-circle text-blue-500"></i>
+            <span>{{ __('Fields marked with') }} <span class="text-red-500 font-bold">*</span> {{ __('are required') }}</span>
+        </div>
+
+        <!-- Full Name -->
         <div>
-            <x-input-label for="name" :value="__('Full name')" class="text-sm font-medium text-gray-700" />
+            <div class="flex items-center gap-1">
+                <x-input-label for="name" :value="__('Full name')" class="text-sm font-medium text-gray-700" />
+                <span class="text-red-500 font-bold">*</span>
+            </div>
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-user text-gray-400"></i>
@@ -104,18 +135,22 @@ new #[Layout('layouts.guest')] class extends Component
                     class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
                     type="text" 
                     name="name" 
-                    required 
                     autofocus 
                     autocomplete="name"
                     placeholder="Jean Dupont"
                 />
             </div>
-            <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm text-red-600" />
+            @error('name')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" class="text-sm font-medium text-gray-700" />
+            <div class="flex items-center gap-1">
+                <x-input-label for="email" :value="__('Email')" class="text-sm font-medium text-gray-700" />
+                <span class="text-red-500 font-bold">*</span>
+            </div>
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-envelope text-gray-400"></i>
@@ -125,17 +160,72 @@ new #[Layout('layouts.guest')] class extends Component
                     id="email" 
                     class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
                     type="email" 
-                    name="email" 
+                    name="email"
                     autocomplete="username"
                     placeholder="votre@email.com"
                 />
             </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-600" />
+            @error('email')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- Phone -->
+        <div>
+            <div class="flex items-center gap-1">
+                <x-input-label for="phone" :value="__('Phone number')" class="text-sm font-medium text-gray-700" />
+                <span class="text-red-500 font-bold">*</span>
+            </div>
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-phone text-gray-400"></i>
+                </div>
+                <x-text-input 
+                    wire:model="phone" 
+                    id="phone" 
+                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
+                    type="tel" 
+                    name="phone" 
+                    autocomplete="tel"
+                    placeholder="+33 6 12 34 56 78"
+                />
+            </div>
+            @error('phone')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- Address (Optionnel) -->
+        <div>
+            <div class="flex items-center gap-1">
+                <x-input-label for="address" :value="__('Address')" class="text-sm font-medium text-gray-700" />
+                <span class="text-xs text-gray-400 ml-1">{{ __('(Optional)') }}</span>
+            </div>
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-map-marker-alt text-gray-400"></i>
+                </div>
+                <x-text-input 
+                    wire:model="address" 
+                    id="address" 
+                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
+                    type="text" 
+                    name="address" 
+                    autocomplete="street-address"
+                    placeholder="123 Rue de Paris, 75001 Paris" 
+                />
+            </div>
+            @error('address')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" class="text-sm font-medium text-gray-700" />
+            <div class="flex items-center gap-1">
+                <x-input-label for="password" :value="__('Password')" class="text-sm font-medium text-gray-700" />
+                <span class="text-red-500 font-bold">*</span>
+            </div>
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-lock text-gray-400"></i>
@@ -146,7 +236,6 @@ new #[Layout('layouts.guest')] class extends Component
                     class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
                     type="{{ $showPassword ? 'text' : 'password' }}"
                     name="password" 
-                    required 
                     autocomplete="new-password"
                     placeholder="••••••••"
                 />
@@ -154,9 +243,11 @@ new #[Layout('layouts.guest')] class extends Component
                     <i class="fas {{ $showPassword ? 'fa-eye-slash' : 'fa-eye' }} text-gray-400 hover:text-gray-600"></i>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-600" />
+            @error('password')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
             
-            <!-- Indicateur de force du mot de passe -->
+            <!-- Password strength indicator -->
             @php $s = $this->passwordStrength(); @endphp
             <div class="mt-2 space-y-1">
                 <div class="flex items-center gap-2 text-xs">
@@ -171,7 +262,10 @@ new #[Layout('layouts.guest')] class extends Component
 
         <!-- Confirm Password -->
         <div>
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-sm font-medium text-gray-700" />
+            <div class="flex items-center gap-1">
+                <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-sm font-medium text-gray-700" />
+                <span class="text-red-500 font-bold">*</span>
+            </div>
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-check-circle text-gray-400"></i>
@@ -182,7 +276,6 @@ new #[Layout('layouts.guest')] class extends Component
                     class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150"
                     type="{{ $showPasswordConfirmation ? 'text' : 'password' }}"
                     name="password_confirmation"
-                    required
                     autocomplete="new-password"
                     placeholder="{{ __('Confirm your password') }}"
                 />
@@ -190,7 +283,9 @@ new #[Layout('layouts.guest')] class extends Component
                     <i class="fas {{ $showPasswordConfirmation ? 'fa-eye-slash' : 'fa-eye' }} text-gray-400 hover:text-gray-600"></i>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-sm text-red-600" />
+            @error('password_confirmation')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Submit Button -->
@@ -205,11 +300,12 @@ new #[Layout('layouts.guest')] class extends Component
                 {{ __('Create my account') }}
             </span>
             <span wire:loading wire:target="register">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
                 {{ __('Creating account...') }}
             </span>
         </button>
 
-        <!-- Lien de connexion -->
+        <!-- Login link -->
         <div class="text-center pt-2">
             <p class="text-sm text-gray-600">
                 {{ __('Already have an account?') }}
@@ -219,5 +315,6 @@ new #[Layout('layouts.guest')] class extends Component
             </p>
         </div>
     </form>
+
 </div>
 
