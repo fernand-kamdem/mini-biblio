@@ -2,55 +2,7 @@
 
 
 <!-- Alertes / Notifications -->
-@if(session('success'))
-                    <div class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-check-circle text-green-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-green-700">{{ session('success') }}</p>
-                            </div>
-                            <button type="button" class="ml-auto text-green-400 hover:text-green-600" onclick="this.parentElement.parentElement.remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 p-4">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-circle text-red-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-red-700">{{ session('error') }}</p>
-                            </div>
-                            <button type="button" class="ml-auto text-red-400 hover:text-red-600" onclick="this.parentElement.parentElement.remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                @endif
-
-                @if(session('warning'))
-                    <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-200 p-4">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">{{ session('warning') }}</p>
-                            </div>
-                            <button type="button" class="ml-auto text-yellow-400 hover:text-yellow-600" onclick="this.parentElement.parentElement.remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                @endif
-
-
+    <x-alert-message />
 
     <!-- Barre de recherche et bouton ajouter -->
     <div class="flex flex-col gap-3 md:flex-row md:items-end">
@@ -83,7 +35,7 @@
         <div class="flex items-center gap-2">
             <i class="fas fa-tags text-indigo-600"></i>
             <h3 class="text-base font-semibold text-gray-900">{{ __('List of categories') }}</h3>
-            <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">5</span>
+            <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">{{ $totalCategories}}</span>
         </div>
     </div>
 
@@ -113,9 +65,11 @@
                         <td class="px-4 py-3"><span class="inline-flex rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">{{$category->books->count()}}</span></td>
                         <td class="px-4 py-3">
                             <div class="flex justify-end gap-1">
-                                <button type="button" class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600" title="{{ __('View') }}"><i class="fas fa-eye text-sm"></i></button>
-                                <button type="button" wire:click="openEditModalForm({{ $category->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-amber-50 hover:text-amber-600" title="{{ __('Edit') }}"><i class="fas fa-edit text-sm"></i></button>
-                                <button type="button" wire:click="openConfirmDeleteModal({{ $category->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="{{ __('Delete') }}"><i class="fas fa-trash text-sm"></i></button>
+                                @can('gérer-catégories')
+                                    <button type="button" class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600" title="{{ __('View') }}"><i class="fas fa-eye text-sm"></i></button>
+                                    <button type="button" wire:click="openEditModalForm({{ $category->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-amber-50 hover:text-amber-600" title="{{ __('Edit') }}"><i class="fas fa-edit text-sm"></i></button>
+                                    <button type="button" wire:click="openConfirmDeleteModal({{ $category->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="{{ __('Delete') }}"><i class="fas fa-trash text-sm"></i></button>
+                                @endcan
                             </div>
                         </td>
                     </tr>

@@ -109,7 +109,8 @@ class CategoryList extends Component{
         ->paginate(10);
 
         return view('biblio::livewire.category-list', [
-            'categories' =>$categories
+            'categories' =>$categories,
+            'totalCategories' => Category::count(),
         ]);
     }
 

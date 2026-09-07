@@ -106,7 +106,8 @@ class AuthorList extends Component{
         ->orderBy('created_at', 'desc')
         ->paginate(10);
         return view('biblio::livewire.author-list', [
-            'authors'=>$authors
+            'authors'=>$authors,
+            'totalAuthors' => Author::count(),
         ]);
     }
 }
