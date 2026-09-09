@@ -1,82 +1,83 @@
 <div>
-                
     <x-alert-message />
-    <!-- Barre de recherche et bouton ajouter -->
-    <div class="flex flex-col gap-3 md:flex-row md:items-end">
-        <div class="flex-1">
-            <label for="member_search" class="mb-1 block text-sm font-medium text-gray-700">
-               {{ __('Search an member') }}
-            </label>
-            <input
-                id="member_search"
-                type="text"
-                wire:model.live.debounce.300ms="search"
-                placeholder="{{__('Search by name or card number...') }}"
-                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
-            >
-        </div>
-        <div class="w-full md:w-auto">
-            <button
-                type="button"
-                wire:click="openCreateModal"
-                class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 md:w-auto"
-            >
-                <i class="fas fa-plus"></i>
-                {{ __('New member') }}
-            </button>
+
+    {{-- ========== FILTRES ========== --}}
+    <div class="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-col gap-3 md:flex-row md:items-end">
+            <div class="flex-1">
+                <label for="member_search" class="mb-1 block text-sm font-medium text-gray-700">
+                    {{ __('Search an member') }}
+                </label>
+                <input
+                    id="member_search"
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
+                    placeholder="{{ __('Search by name or card number...') }}"
+                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                >
+            </div>
         </div>
     </div>
 
-     <!-- En-tête du tableau -->
-     <div class="mt-4 flex flex-col gap-3 border-b border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-2">
-            <i class="fas fa-users text-indigo-600"></i>
-            <h3 class="text-base font-semibold text-gray-900">{{ __('List of memebers') }}</h3>
-            <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">{{$totalMembers}}</span>
+    {{-- ========== TABLEAU ========== --}}
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div class="flex flex-col gap-3 border-b border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-users text-indigo-600"></i>
+                <h3 class="text-base font-semibold text-gray-900">{{ __('List of memebers') }}</h3>
+                <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">{{ $totalMembers }}</span>
+            </div>
+            @can('gérer-membres')
+                <button
+                    type="button"
+                    wire:click="openCreateModal"
+                    class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                >
+                    <i class="fas fa-plus"></i>
+                    {{ __('New member') }}
+                </button>
+            @endcan
         </div>
-    </div>
 
-    <!-- Tableau -->
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50">
-                <tr>
-                    <th class="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">{{ __('numMember') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ __('nameMember') }}</th>
-                    <th class="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">{{ __('cardMember') }}</th>
-                    <th class="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">{{ __('phoneMember') }}</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">{{ __('actionsMember') }}</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                    @forelse($members as $member)
-                    <tr class="hover:bg-gray-50">
-                        <td class="hidden px-4 py-3 sm:table-cell"><span class="text-xs font-medium text-gray-500">{{ '#'.$loop->iteration}}</span></td>
-                        <td class="px-4 py-3">{{$member?->user?->name}}</td>
-                        <td class="hidden px-4 py-3 sm:table-cell"><p class="font-medium text-gray-900">{{$member->card_number}}</p></td>
-                        <td class="hidden px-4 py-3 md:table-cell"><span class="text-sm text-gray-600">{{$member->phone}}</span></td>
-                        <td class="px-4 py-3">
-                            <div class="flex justify-end gap-1">
-                                <button type="button" wire:click="openDetailsModal({{ $member->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600" title="{{ __('View') }}"><i class="fas fa-eye text-sm"></i></button>
-                                <button type="button" wire:click="openEditModal({{ $member->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-amber-50 hover:text-amber-600" title="{{ __('Edit') }}"><i class="fas fa-edit text-sm"></i></button>
-                                <button type="button" wire:click="openConfirmDeleteModal({{ $member->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="{{ __('Delete') }}"><i class="fas fa-trash text-sm"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="border-b border-gray-200 bg-gray-50">
                     <tr>
-                        <td colspan="5" class="px-4 py-12 text-center text-sm text-gray-500">{{ __('noMemberFound') }}</td>
+                        <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">{{ __('numMember') }}</th>
+                        <th class="px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500">{{ __('nameMember') }}</th>
+                        <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">{{ __('cardMember') }}</th>
+                        <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">{{ __('phoneMember') }}</th>
+                        <th class="px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500">{{ __('actionsMember') }}</th>
                     </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($members as $member)
+                        <tr class="hover:bg-gray-50">
+                            <td class="hidden px-4 py-3 text-center align-middle sm:table-cell"><span class="text-xs font-medium text-gray-500">{{ '#'.$loop->iteration }}</span></td>
+                            <td class="px-4 py-3 text-center align-middle">{{ $member?->user?->name }}</td>
+                            <td class="hidden px-4 py-3 text-center align-middle sm:table-cell"><p class="font-medium text-gray-900">{{ $member->card_number }}</p></td>
+                            <td class="hidden px-4 py-3 text-center align-middle md:table-cell"><span class="text-sm text-gray-600">{{ $member->phone }}</span></td>
+                            <td class="px-4 py-3 text-center align-middle">
+                                <div class="flex justify-center gap-1">
+                                    <button type="button" wire:click="openDetailsModal({{ $member->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600" title="{{ __('View') }}"><i class="fas fa-eye text-sm"></i></button>
+                                    <button type="button" wire:click="openEditModal({{ $member->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-amber-50 hover:text-amber-600" title="{{ __('Edit') }}"><i class="fas fa-edit text-sm"></i></button>
+                                    <button type="button" wire:click="openConfirmDeleteModal({{ $member->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="{{ __('Delete') }}"><i class="fas fa-trash text-sm"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-12 text-center text-sm text-gray-500">{{ __('noMemberFound') }}</td>
+                        </tr>
                     @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Pagination -->
-    {{-- Pagination Laravel (thème Tailwind côté composant PHP) --}}
-        <div class="border-t border-blue-200 bg-blue-50 px-4 py-3">
-            {{$members->links()}}
+                </tbody>
+            </table>
         </div>
+
+        <div class="border-t border-blue-200 bg-blue-50 px-4 py-3">
+            {{ $members->links() }}
+        </div>
+    </div>
 
     <!-- Modale de création/édition -->
     @if($showModalForm)
@@ -109,7 +110,7 @@
 
     @if ($showModalDetails)
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div class="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-xl bg-white shadow-xl">
+            <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-xl">
                 <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
                     <h4 class="text-lg font-semibold text-gray-900">
                         {{ __('Member detail') }}

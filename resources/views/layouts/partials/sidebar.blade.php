@@ -18,7 +18,7 @@
         <!-- Dashboard -->
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
             <i class="fas fa-th-large w-5 text-center text-lg"></i>
-            <span>Tableau de bord</span>
+            <span>{{ __('Dashboard') }}</span>
         </a>
 
         <!-- Section : Gestion des livres -->
@@ -49,7 +49,7 @@
         @can('voir-membres')
             <p class="px-4 pt-6 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('Members') }}</p>
             
-            <a href="{{ route('emprunt-member.list') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200{{ request()->routeIs('emprunt-member.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+            <a href="{{ route('emprunt-member.list') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('emprunt-member.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i class="fas fa-users w-5 text-center text-lg"></i>
                 <span>{{ __('All members') }}</span>
             </a>
@@ -57,15 +57,19 @@
         <!-- Section : Gestion des emprunts -->
         <p class="px-4 pt-6 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('Loans') }}</p>
         
-        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+        @can('gérer-emprunts')
+        <a href="{{ route('emprunt-emprunt.list') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('emprunt-emprunt.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}} ">
             <i class="fas fa-hand-holding-heart w-5 text-center text-lg"></i>
-            <span>{{ __('Active loans') }}</span>
+            <span>{{ __('Tous les emprunts') }}</span>
         </a>
+        @endcan
         
-        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
-            <i class="fas fa-clock w-5 text-center text-lg"></i>
-            <span>{{ __('Overdue') }}</span>
+        @can('voir-mes-emprunts')
+        <a href="{{ route('emprunt-mesemprunts.list') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('emprunt-mesemprunts.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+            <i class="fas fa-hand-holding text-center text-lg"></i>
+            <span>{{ __('Mes emprunts') }}</span>
         </a>
+        @endcan
 
         <!-- Section : Paramètres -->
         <p class="px-4 pt-6 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('Settings') }}</p>

@@ -1,4 +1,17 @@
 <form wire:submit="save" class="space-y-5">
+    <!-- En-tête du formulaire -->
+    <div class="flex items-center gap-3 border-b border-gray-200 pb-4">
+        <div class="rounded-lg bg-indigo-50 p-2.5">
+            <i class="fas fa-info-circle text-indigo-600"></i>
+        </div>
+        <div>
+            <h3 class="text-sm font-semibold text-gray-900">{{ __('Book information') }}</h3>
+            <p class="text-xs text-gray-500">
+                {{ __('Fill in all required fields') }} <span class="text-red-500 font-bold">*</span>
+            </p>
+        </div>
+    </div>
+
     {{-- Titre --}}
     <div>
         <x-input-label for="titre" :value="__('Title')" />

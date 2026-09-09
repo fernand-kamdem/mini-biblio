@@ -171,7 +171,7 @@ class BookList extends Component
 
     public function openDetailModal(int $bookId): void
     {
-        if (! Auth::user()?->can('gérer-livres')) {
+        if (! Auth::user()?->can('voir-livres')) {
             return;
         }
 

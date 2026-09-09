@@ -24,7 +24,7 @@ Un **membre** soumet une demande ; un **bibliothécaire** ou **admin** approuve,
 
 ---
 
-## Déjà en place (2026-09-01)
+## Déjà en place (2026-09-07)
 
 | Élément | Fichier | Statut |
 |---------|---------|--------|
@@ -35,21 +35,21 @@ Un **membre** soumet une demande ; un **bibliothécaire** ou **admin** approuve,
 | Enum `StatutEmprunt` | `Modules/Emprunt/app/Enums/StatutEmprunt.php` | ✅ |
 | Getters/setters workflow | `Emprunt::getWorkflowState()` / `setWorkflowState()` | ✅ |
 | Relations croisées | `User`, `Book`, `Member`, `Emprunt` | ✅ |
-| Rôle MEMBRE à l'inscription | `register.blade.php` Volt | ✅ |
+| Package Symfony Workflow | `composer.json` → `symfony/workflow` | ✅ |
+| Config workflow | `config/workflow.php` | ✅ |
+| Enregistrement DI | `EmpruntServiceProvider` → `workflow.emprunt` | ✅ |
+| Service métier | `Modules/Emprunt/app/Services/EmpruntWorkflowService.php` | ✅ |
+| CRUD membres Livewire | Voir [09](./09-feat-module-emprunt-membres.md) | ✅ |
+| Rôle MEMBRE + Member à l'inscription | `register.blade.php` Volt | ✅ |
 
-## À faire (prochaine session)
+## À faire (UI + effets de bord)
 
 | Élément | Fichier cible | Priorité |
 |---------|---------------|----------|
-| Package Symfony Workflow | `composer require symfony/workflow` | 1 |
-| Config workflow | `config/workflow.php` | 1 |
-| Enregistrement DI | `EmpruntServiceProvider` | 1 |
-| Service métier | `Modules/Emprunt/app/Services/EmpruntWorkflowService.php` | 2 |
-| Observer membre | `app/Observers/MemberObserver.php` | 2 |
-| Observer emprunt | `app/Observers/EmpruntObserver.php` | 3 |
-| Livewire | `EmpruntForm`, `EmpruntList`, `TableauDeBord` | 3 |
-| Mails + Events | `~/Desktop/laravel-notifications-core.md` | 4 |
-| Reverb (temps réel) | plus tard | 5 |
+| Livewire emprunts | `EmpruntForm`, `EmpruntList` (+ routes / sidebar) | 1 |
+| Observer emprunt | `app/Observers/EmpruntObserver.php` | 2 |
+| Mails + Events | `~/Desktop/laravel-notifications-core.md` | 3 |
+| Reverb (temps réel) | plus tard | 4 |
 
 ---
 

@@ -1,30 +1,9 @@
-{{--
-    BookList — vue parent CRUD.
-    Props render() : $books, $categories, $totalBooks.
-    États : filtres ($search, $categoryId) + 3 modals (form / delete / detail).
-
-    Boutons → méthodes BookList :
-      Nouveau        → showCreateModal
-      Œil            → openDetailModal($id)
-      Crayon         → showEditModal($id)
-      Poubelle       → showConfirmDelete($id)
-
-    Enfants inclus dans les modals :
-      book-form     (:book-id="$editingId")
-      book-details  (:book-id="$bookIdToShow")
---}}
-
-
-                
-
-
 <div>
     <x-alert-message />
 
-    {{-- ========== FILTRES (équivalent <x-filter-card> Easy Day-O) ========== --}}
+    {{-- ========== FILTRES ========== --}}
     <div class="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
         <div class="flex flex-col gap-3 md:flex-row md:items-end">
-            {{-- Recherche titre / ISBN (debounce 300ms pour limiter les requêtes) --}}
             <div class="flex-1">
                 <label for="book_search" class="mb-1 block text-sm font-medium text-gray-700">
                     {{ __('Book') }}
@@ -38,7 +17,6 @@
                 >
             </div>
 
-            {{-- Filtre par catégorie --}}
             <div class="w-full md:w-56">
                 <label for="book_category" class="mb-1 block text-sm font-medium text-gray-700">
                     {{ __('Category') }}
@@ -57,9 +35,8 @@
         </div>
     </div>
 
-    {{-- ========== TABLEAU (équivalent <x-table-card> Easy Day-O) ========== --}}
+    {{-- ========== TABLEAU ========== --}}
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        {{-- En-tête : titre + compteur + bouton créer --}}
         <div class="flex flex-col gap-3 border-b border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-2">
                 <i class="fas fa-book text-indigo-600"></i>
@@ -69,7 +46,6 @@
                 </span>
             </div>
 
-            {{-- Bouton visible uniquement avec permission gérer-livres --}}
             @can('gérer-livres')
                 <button
                     type="button"
@@ -86,23 +62,27 @@
             <table class="w-full text-sm">
                 <thead class="border-b border-gray-200 bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                        <th class="px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500">
                             {{ __('Title') }}
                         </th>
                         {{-- Colonnes masquées progressivement sur mobile --}}
-                        <th class="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">
+                        <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">
                             {{ __('Category') }}
                         </th>
-                        <th class="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
-                            {{ __('ISBN') }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                        @can('gérer-livres')
+                        <th class="px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500">
                             {{ __('Stock') }}
                         </th>
-                        <th class="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
+                        @endcan
+
+                        <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">
+                            {{ __('Annee de parution') }}
+                        </th>
+
+                        <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
                             {{ __('Authors') }}
                         </th>
-                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                        <th class="px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500">
                             {{ __('Actions') }}
                         </th>
                     </tr>
@@ -111,28 +91,32 @@
                 <tbody class="divide-y divide-gray-200" wire:loading.class="opacity-60">
                     @forelse ($books as $book)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center align-middle">
                                 <p class="font-medium text-gray-900">{{ $book->titre }}</p>
-                                {{-- Catégorie affichée sous le titre sur mobile uniquement --}}
                                 <p class="text-xs text-gray-500 sm:hidden">
                                     {{ $book->category?->nom ?? __('Uncategorized') }}
                                 </p>
                             </td>
-                            <td class="hidden px-4 py-3 sm:table-cell">
+                            <td class="hidden px-4 py-3 text-center align-middle sm:table-cell">
                                 <span class="inline-flex rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">
                                     {{ $book->category?->nom ?? __('Uncategorized') }}
                                 </span>
                             </td>
-                            <td class="hidden px-4 py-3 md:table-cell">
-                                <code class="rounded bg-gray-100 px-2 py-1 text-xs">{{ $book->isbn ?: '—' }}</code>
-                            </td>
-                            <td class="px-4 py-3">
-                                {{-- disponible / total --}}
+                            @can('gérer-livres')
+                            <td class="px-4 py-3 text-center align-middle">
                                 <span class="font-medium text-gray-900">{{ $book->stock_disponible }}</span>
                                 <span class="text-xs text-gray-400">/ {{ $book->stock_total }}</span>
                             </td>
-                            <td class="hidden px-4 py-3 lg:table-cell">
-                                <div class="flex flex-wrap gap-1">
+                            @endcan
+
+                            <td class="hidden px-4 py-3 text-center align-middle sm:table-cell">
+                                <span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+                                    {{ $book->annee_parution ?? 'N/A' }}
+                                </span>
+                            </td>
+
+                            <td class="hidden px-4 py-3 text-center align-middle lg:table-cell">
+                                <div class="flex flex-wrap justify-center gap-1">
                                     @forelse ($book->authors as $author)
                                         <span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
                                             {{ $author->prenom }} {{ $author->nom }}
@@ -142,20 +126,42 @@
                                     @endforelse
                                 </div>
                             </td>
-                            <td class="px-4 py-3">
-                                <div class="flex justify-end gap-1">
-                                    @can('gérer-livres')
-                                    {{-- bouton book detail --}}
-                                    <button
-                                        type="button"
-                                        wire:click="openDetailModal({{ $book->id }})"
-                                        class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
-                                        title="{{ __('Book detail') }}"
-                                    >
-                                        <i class="fas fa-eye text-sm"></i>
-                                    </button>
+                            <td class="px-4 py-3 text-center align-middle">
+                                <div class="flex justify-center gap-1">
 
-                                    {{-- bouton édition --}}
+                                        {{-- bouton book detail --}}
+                                            <button
+                                                type="button"
+                                                wire:click="openDetailModal({{ $book->id }})"
+                                                class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                                                title="{{ __('Book detail') }}"
+                                            >
+                                                <i class="fas fa-eye text-sm"></i>
+                                            </button>   
+
+                                        {{-- bouton emprunter --}}
+                                        @if($book->stock_disponible > 0)
+                                            <button
+                                                type="button"
+                                                class="rounded-lg p-1.5 text-gray-400 hover:bg-green-50 hover:text-green-600"
+                                                title="{{ __('Borrow') }}"
+                                            >
+                                                <i class="fas fa-hand-holding text-sm"></i>
+                                            </button>
+                                        @else
+                                            <button
+                                                type="button"
+                                                disabled
+                                                class="rounded-lg p-1.5 text-gray-300 cursor-not-allowed"
+                                                title="{{ __('Unavailable') }}"
+                                            >
+                                                <i class="fas fa-times-circle text-sm"></i>
+                                            </button>
+                                        @endif
+
+
+                                    @can('gérer-livres')
+                                        {{-- bouton édition --}}
                                         <button
                                             type="button"
                                             wire:click="showEditModal({{ $book->id }})"
@@ -174,8 +180,6 @@
                                         >
                                             <i class="fas fa-trash text-sm"></i>
                                         </button>
-
-
                                     @endcan
                                 </div>
                             </td>

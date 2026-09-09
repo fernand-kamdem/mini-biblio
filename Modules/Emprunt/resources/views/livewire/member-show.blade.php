@@ -49,9 +49,9 @@
     </div>
 
     <!-- Grille principale -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <!-- Colonne gauche : Informations personnelles -->
-        <div class="lg:col-span-2">
+    <div class="space-y-6">
+        <!-- Informations personnelles -->
+        <div>
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                 <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
                     <h2 class="text-sm font-semibold text-gray-900">
@@ -112,52 +112,50 @@
             </div>
         </div>
 
-        <!-- Colonne droite : Carte membre et statistiques -->
-        <div class="lg:col-span-1">
-            <div class="space-y-6">
-                <!-- Carte membre -->
-                <div class="overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 p-5 text-white shadow-sm">
-                    <div class="flex items-start justify-between">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs font-medium uppercase tracking-wider text-indigo-200">
-                                {{ __('Library card') }}
-                            </p>
-                            <p class="mt-2 text-base font-bold truncate">{{ $name }}</p>
-                            <p class="font-mono text-sm text-indigo-200 truncate">{{ $card_number }}</p>
-                        </div>
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20 ml-3">
-                            <i class="fas fa-user text-lg text-white"></i>
-                        </div>
+        <!-- Carte membre et statistiques -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <!-- Carte membre -->
+            <div class="overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 p-5 text-white shadow-sm">
+                <div class="flex items-start justify-between">
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium uppercase tracking-wider text-indigo-200">
+                            {{ __('Library card') }}
+                        </p>
+                        <p class="mt-2 text-base font-bold truncate">{{ $name }}</p>
+                        <p class="font-mono text-sm text-indigo-200 truncate">{{ $card_number }}</p>
                     </div>
-                    <div class="mt-3 flex items-center justify-between border-t border-white/20 pt-3 text-xs">
-                        <span class="font-medium text-white">
-                            {{ $is_active ? __('Active') : __('Disabled') }}
-                        </span>
+                    <div class="ml-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20">
+                        <i class="fas fa-user text-lg text-white"></i>
                     </div>
                 </div>
+                <div class="mt-3 flex items-center justify-between border-t border-white/20 pt-3 text-xs">
+                    <span class="font-medium text-white">
+                        {{ $is_active ? __('Active') : __('Disabled') }}
+                    </span>
+                </div>
+            </div>
 
-                <!-- Statistiques -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="rounded-lg bg-blue-100 p-2 shrink-0">
-                                <i class="fas fa-book text-blue-600 text-sm"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-xs font-medium uppercase tracking-wide text-gray-500 truncate">{{ __('Loans') }}</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $total_loans ?? 0 }}</p>
-                            </div>
+            <!-- Statistiques -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="shrink-0 rounded-lg bg-blue-100 p-2">
+                            <i class="fas fa-book text-sm text-blue-600"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="truncate text-xs font-medium uppercase tracking-wide text-gray-500">{{ __('Loans') }}</p>
+                            <p class="text-lg font-bold text-gray-900">{{ $total_loans ?? 0 }}</p>
                         </div>
                     </div>
-                    <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="rounded-lg bg-yellow-100 p-2 shrink-0">
-                                <i class="fas fa-clock text-yellow-600 text-sm"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-xs font-medium uppercase tracking-wide text-gray-500 truncate">{{ __('Late') }}</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $late_loans ?? 0 }}</p>
-                            </div>
+                </div>
+                <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="shrink-0 rounded-lg bg-yellow-100 p-2">
+                            <i class="fas fa-clock text-sm text-yellow-600"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="truncate text-xs font-medium uppercase tracking-wide text-gray-500">{{ __('Late') }}</p>
+                            <p class="text-lg font-bold text-gray-900">{{ $late_loans ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
