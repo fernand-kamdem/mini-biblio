@@ -1,7 +1,20 @@
 <form class="space-y-5" wire:submit="save">
+    <!-- En-tête du formulaire -->
+    <div class="flex items-center gap-3 border-b border-gray-200 pb-4">
+        <div class="rounded-lg bg-indigo-50 p-2.5">
+            <i class="fas fa-info-circle text-indigo-600"></i>
+        </div>
+        <div>
+            <h3 class="text-sm font-semibold text-gray-900">{{ __('Author information') }}</h3>
+            <p class="text-xs text-gray-500">
+                {{ __('Fill in all required fields') }} <span class="text-red-500 font-bold">*</span>
+            </p>
+        </div>
+    </div>
+
     <!-- Nom -->
     <div>
-        <label for="nom" class="block text-sm font-medium text-gray-700">{{ __('Name') }}</label>
+        <label for="nom" class="block text-sm font-medium text-gray-700">{{ __('Name') }} <span class="text-red-500">*</span></label>
         <input
             id="nom"
             type="text"
@@ -16,7 +29,7 @@
 
     <!-- Prenom -->
     <div>
-        <label for="prenom" class="block text-sm font-medium text-gray-700">{{ __('Surname') }}</label>
+        <label for="prenom" class="block text-sm font-medium text-gray-700">{{ __('Surname') }} <span class="text-red-500">*</span></label>
         <input
             id="prenom"
             type="text"

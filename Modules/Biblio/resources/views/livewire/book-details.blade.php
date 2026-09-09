@@ -52,13 +52,15 @@
             </dd>
         </div>
 
-        <div>
-            <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">{{ __('Available stock') }}</dt>
-            <dd class="mt-1 text-sm text-gray-900">
-                <span class="font-medium">{{ $book->stock_disponible }}</span>
-                <span class="text-gray-400">/ {{ $book->stock_total }}</span>
-            </dd>
-        </div>
+        @can('gérer-livres')
+            <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">{{ __('Available stock') }}</dt>
+                <dd class="mt-1 text-sm text-gray-900">
+                    <span class="font-medium">{{ $book->stock_disponible }}</span>
+                    <span class="text-gray-400">/ {{ $book->stock_total }}</span>
+                </dd>
+            </div>
+        @endcan
 
         <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">{{ __('Authors') }}</dt>

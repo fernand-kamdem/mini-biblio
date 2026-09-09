@@ -196,7 +196,7 @@ class BookForm extends Component
             })
             ->orderBy('nom')
             ->orderBy('prenom')
-            ->limit(20)
+            ->limit(50)
             ->get();
 
         $selectedAuthors = empty($this->authorIds)
