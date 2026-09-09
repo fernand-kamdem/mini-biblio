@@ -42,8 +42,10 @@ class RolesPermissionsSeeder extends Seeder
             'voir-livres',
             'gérer-livres',
             'créer-emprunt',
+            'modifier-emprunt',
             'voir-mes-emprunts',
             'annuler-emprunt',
+            'supprimer-emprunt',
             'gérer-emprunts',
             'approuver-emprunt',
             'refuser-emprunt',
@@ -104,6 +106,7 @@ class RolesPermissionsSeeder extends Seeder
             'voir-catégories',
             'gérer-catégories',
             'voir-auteurs',
+            'voir-mes-emprunts',
             'gérer-auteurs',
             'voir-livres',
             'gérer-livres',
@@ -127,6 +130,8 @@ class RolesPermissionsSeeder extends Seeder
             'créer-emprunt',
             'voir-mes-emprunts',
             'annuler-emprunt',
+            'modifier-emprunt',
+            'supprimer-emprunt'
         ]);
 
         // L'administrateur reçoit toutes les permissions existantes.

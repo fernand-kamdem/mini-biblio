@@ -24,19 +24,20 @@ class Emprunt extends Model
         'statut',
         'workflow_state',
         'date_emprunt',
+        'date_retour_souhaitee',
         'date_retour_prevue',
         'date_retour_reelle',
         'approuve_par',
         'note_membre',
-        'note_bibliotécaire'
+        'note_bibliotécaire',
     ];
 
-    protected $casts=
-    [
-        'statut'=>StatutEmprunt::class,
-        'date_emprunt'=>'date',
-        'date_retour_prevue'=>'date',
-        'date_retour_reelle'=>'date'
+    protected $casts = [
+        'statut' => StatutEmprunt::class,
+        'date_emprunt' => 'date',
+        'date_retour_souhaitee' => 'date',
+        'date_retour_prevue' => 'date',
+        'date_retour_reelle' => 'date',
     ];
 
     public function member():BelongsTo

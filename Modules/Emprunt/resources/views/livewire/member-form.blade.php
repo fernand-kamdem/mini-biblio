@@ -1,8 +1,15 @@
 <form class="space-y-6" wire:submit.prevent="save">
     <!-- En-tête du formulaire -->
-    <div class="border-b border-gray-200 pb-4">
-        <h3 class="text-lg font-semibold text-gray-900">{{ __('Member information') }}</h3>
-        <p class="mt-1 text-sm text-gray-500">{{ __('Fill in all required fields (*)') }}</p>
+    <div class="flex items-center gap-3 border-b border-gray-200 pb-4">
+        <div class="rounded-lg bg-indigo-50 p-2.5">
+            <i class="fas fa-info-circle text-indigo-600"></i>
+        </div>
+        <div>
+            <h3 class="text-sm font-semibold text-gray-900">{{ __('Member information') }}</h3>
+            <p class="text-xs text-gray-500">
+                {{ __('Fill in all required fields') }} <span class="text-red-500 font-bold">*</span>
+            </p>
+        </div>
     </div>
 
     <!-- Grille 2 colonnes pour les infos principales -->
@@ -114,11 +121,5 @@
             <i class="{{ $memberId? 'fas fa-edit mr-2' : 'fas fa-save mr-2' }}"></i>
             {{ $memberId? __('Update') : __('Create') }}
         </button>
-    </div>
-
-    <!-- Message d'information -->
-    <div class="mt-4 rounded-lg bg-blue-50 p-4 text-sm text-blue-700">
-        <i class="fas fa-info-circle mr-2"></i>
-        {{ __('The fields marked with an * are required') }}
     </div>
 </form>

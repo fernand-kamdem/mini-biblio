@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Emprunt\Http\Controllers\MemberController;
+use Modules\Emprunt\Http\Controllers\EmpruntController;
 
 
 Route::middleware(['auth', 'verified'])->prefix('emprunt')->group(function () {
@@ -13,4 +14,16 @@ Route::middleware(['auth', 'verified'])->prefix('emprunt')->group(function () {
                 ->name('list')
                 ->middleware('permission:voir-membres');
         });
+    
+    Route::prefix('emprunts')
+        ->controller(EmpruntController::class)
+        ->group(function () {
+            Route::get('', 'index')
+                ->name('emprunt-emprunt.list')
+                ->middleware('permission:gérer-emprunts');
+            Route::get('/mes-emprunts', 'myLoans')
+                ->name('emprunt-mesemprunts.list')
+                ->middleware('permission:voir-mes-emprunts');
+        });
+
 });
