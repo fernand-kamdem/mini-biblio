@@ -14,7 +14,6 @@ new class extends Component
     public string $card_number = '';
     public string $address = '';
     public bool $is_active = false;
-    public string $language = '';
 
     public function mount(): void
     {
@@ -27,7 +26,6 @@ new class extends Component
         $this->card_number = $member?->card_number ?? '';
         $this->address = $member?->address ?? '';
         $this->is_active = $user->is_active;
-        $this->language = $user->language;
     }
 
     public function updateProfileInformation(): void
@@ -40,15 +38,12 @@ new class extends Component
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'phone' => ['required', 'string', Rule::unique('members', 'phone')->ignore($member?->id)],
             'address' => ['nullable', 'string', 'max:255'],
-            'language' => ['required', 'string', 'max:2'],
         ]);
 
-        $languageChanged = $user->language !== $validated['language'];
 
         $user->fill([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'language' => $validated['language'],
         ]);
 
         if ($user->isDirty('email')) {
@@ -68,9 +63,6 @@ new class extends Component
         });
 
         session()->flash('status', 'profile-updated');
-        if ($languageChanged) {
-            $this->js('window.location.reload()');
-        }
     }
 
     /**
@@ -251,25 +243,9 @@ new class extends Component
                 @endif
                 <!-- Langue préférée -->
                 <div class="w-full">
-                    <x-input-label for="language" :value="__('Preferred language')" class="text-sm font-medium text-gray-700" />
-                    <div class="relative mt-1">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-globe text-gray-400"></i>
-                        </div>
-                        <select 
-                            wire:model="language" 
-                            id="language" 
-                            name="language" 
-                            class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150 appearance-none bg-white"
-                        >
-                            <option value="fr">{{ __('Français') }}</option>
-                            <option value="en">{{ __('Anglais') }}</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                        </div>
-                    </div>
-                    <x-input-error class="mt-1.5 text-xs" :messages="$errors->get('language')" />
+                    <x-input-label for="language" :value="__('Preferred language')" class="text-sm font-medium text-gray-700 mb-2" />
+                    
+                    <x-language-switcher />
                 </div>
 
                 <!-- Rôle -->
