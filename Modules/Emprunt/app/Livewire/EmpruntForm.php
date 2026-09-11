@@ -2,24 +2,24 @@
 
 namespace Modules\Emprunt\Livewire;
 
-use Livewire\Component;
-use Livewire\WithPagination; 
-use Modules\Emprunt\Models\Emprunt;
-use Modules\Biblio\Models\Book;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Component;
+use Modules\Biblio\Models\Book;
 use Modules\Emprunt\Enums\StatutEmprunt;
+use Modules\Emprunt\Models\Emprunt;
 use Modules\Emprunt\Services\EmpruntWorkflowService;
-
 
 class EmpruntForm extends Component
 {
+    // --- Champs du formulaire ---
     public string $bookSearch = '';
     public ?int $bookId = null;
     public ?int $empruntId = null;
     public ?string $note = null;
     public string $dateRetourSouhaitee = '';
 
+    // --- Sélection livre ---
     public function selectBook(int $bookId): void
     {
         $this->bookId = $bookId;
@@ -31,137 +31,148 @@ class EmpruntForm extends Component
         $this->bookId = null;
     }
 
-    public function cancel(): void
+    // --- Create / Update (brouillon) ---
+    public function saveDraft(): void
     {
-        $this->dispatch('closeModalForm');
-    }
-
-
-    public function saveDraft() : void{
-
         if ($this->empruntId) {
-            $validated=$this->validate([
+            $validated = $this->validate([
                 'bookId' => ['required', 'exists:books,id'],
                 'dateRetourSouhaitee' => ['required', 'date', 'after_or_equal:today'],
-                'note' => ['nullable', 'string', 'max:255'],
+                'note' => ['required', 'string', 'max:255'],
             ]);
 
             $member = Auth::user()?->member;
 
             if (! $member) {
-                session()->flash('error', __('Vous devez être un membre pour emprunter un livre'));
+                $this->dispatch('loanForbidden', message: __('You must be a member to edit a loan'));
+
                 return;
             }
 
-            DB::transaction(function() use($validated,$member){
-            $emprunt=Emprunt::findOrFail($this->empruntId);
-            $emprunt->update(
-                [
+            DB::transaction(function () use ($validated, $member) {
+                $emprunt = Emprunt::findOrFail($this->empruntId);
+                $emprunt->update([
                     'book_id' => $validated['bookId'],
                     'member_id' => $member->id,
                     'statut' => StatutEmprunt::Brouillon,
                     'workflow_state' => 'brouillon',
                     'date_retour_souhaitee' => $validated['dateRetourSouhaitee'],
                     'note_membre' => $validated['note'] ?? null,
-                ]
-            );
+                ]);
                 $this->dispatch('loanDraftUpdated');
             });
+
             return;
         }
-        $validated=$this->validate([
+
+        $validated = $this->validate([
             'bookId' => ['required', 'exists:books,id'],
             'dateRetourSouhaitee' => ['required', 'date', 'after_or_equal:today'],
-            'note' => ['nullable', 'string', 'max:255'],
+            'note' => ['required', 'string', 'max:255'],
         ]);
 
         $member = Auth::user()?->member;
 
         if (! $member) {
-            session()->flash('error', __('Vous devez être un membre pour emprunter un livre'));
+            $this->cancel();
+            $this->dispatch('loanForbidden', message: __('You must be a member to borrow a book'));
+
             return;
         }
 
-        DB::transaction(function() use($validated,$member){
-            Emprunt::create(
-                [
+        DB::transaction(function () use ($validated, $member) {
+            Emprunt::create([
+                'book_id' => $validated['bookId'],
+                'member_id' => $member->id,
+                'statut' => StatutEmprunt::Brouillon,
+                'workflow_state' => 'brouillon',
+                'date_retour_souhaitee' => $validated['dateRetourSouhaitee'],
+                'note_membre' => $validated['note'] ?? null,
+            ]);
+            $this->dispatch('loanDraftCreated');
+        });
+    }
+
+    // --- Submit (demande) ---
+    public function submit(EmpruntWorkflowService $workflow): void
+    {
+        if ($this->empruntId) {
+            $validated = $this->validate([
+                'bookId' => ['required', 'exists:books,id'],
+                'dateRetourSouhaitee' => ['required', 'date', 'after_or_equal:today'],
+                'note' => ['required', 'string', 'max:255'],
+            ]);
+
+            $member = Auth::user()?->member;
+
+            if (! $member) {
+                $this->dispatch('loanForbidden', message: __('You must be a member to edit a loan'));
+
+                return;
+            }
+
+            DB::transaction(function () use ($member, $validated, $workflow) {
+                $emprunt = Emprunt::findOrFail($this->empruntId);
+                $emprunt->update([
                     'book_id' => $validated['bookId'],
                     'member_id' => $member->id,
                     'statut' => StatutEmprunt::Brouillon,
                     'workflow_state' => 'brouillon',
                     'date_retour_souhaitee' => $validated['dateRetourSouhaitee'],
                     'note_membre' => $validated['note'] ?? null,
-                ]
-            );
-            $this->dispatch('loanDraftCreated');
-        });
-    }
-
-    public function submit(EmpruntWorkflowService $workflow): void{
-
-        if ($this->empruntId) {
-
-            $validated=$this->validate([
-                'bookId' => ['required', 'exists:books,id'],
-                'dateRetourSouhaitee' => ['required', 'date', 'after_or_equal:today'],
-                'note' => ['nullable', 'string', 'max:255'],
-            ]);
-
-            $member = Auth::user()?->member;
-
-            DB::transaction(function() use($member,$validated,$workflow){
-                $emprunt=Emprunt::findOrFail($this->empruntId);
-                $emprunt->update(
-                    [
-                        'book_id' => $validated['bookId'],
-                        'member_id' => $member->id,
-                        'statut' => StatutEmprunt::Brouillon,
-                        'workflow_state' => 'brouillon',
-                        'date_retour_souhaitee' => $validated['dateRetourSouhaitee'],
-                        'note_membre' => $validated['note'] ?? null,
-                    ]
-                );
+                ]);
                 $emprunt->load(['book', 'member.user']);
                 $workflow->apply($emprunt, 'demander');
                 $this->dispatch('loanSubmitCreated');
             });
 
-
             return;
         }
-        $validated=$this->validate([
+
+        $validated = $this->validate([
             'bookId' => ['required', 'exists:books,id'],
             'dateRetourSouhaitee' => ['required', 'date', 'after_or_equal:today'],
-            'note' => ['nullable', 'string', 'max:255'],
+            'note' => ['required', 'string', 'max:255'],
         ]);
 
         $member = Auth::user()?->member;
 
-            DB::transaction(function() use($member,$validated,$workflow){
-                $emprunt=Emprunt::create(
-                    [
-                        'book_id' => $validated['bookId'],
-                        'member_id' => $member->id,
-                        'statut' => StatutEmprunt::Brouillon,
-                        'workflow_state' => 'brouillon',
-                        'date_retour_souhaitee' => $validated['dateRetourSouhaitee'],
-                        'note_membre' => $validated['note'] ?? null,
-                    ]
-                );
-                $emprunt->load(['book', 'member.user']);
-                $workflow->apply($emprunt, 'demander');
-                $this->dispatch('loanSubmitCreated');
-            });
+        if (! $member) {
+            $this->cancel();
+            $this->dispatch('loanForbidden', message: __('You must be a member to borrow a book'));
 
+            return;
+        }
+
+        DB::transaction(function () use ($member, $validated, $workflow) {
+            $emprunt = Emprunt::create([
+                'book_id' => $validated['bookId'],
+                'member_id' => $member->id,
+                'statut' => StatutEmprunt::Brouillon,
+                'workflow_state' => 'brouillon',
+                'date_retour_souhaitee' => $validated['dateRetourSouhaitee'],
+                'note_membre' => $validated['note'] ?? null,
+            ]);
+            $emprunt->load(['book', 'member.user']);
+            $workflow->apply($emprunt, 'demander');
+            $this->dispatch('loanSubmitCreated');
+        });
     }
 
-    public function mount(?int $empruntId=null) :void{           
+    // --- Close ---
+    public function cancel(): void
+    {
+        $this->dispatch('closeModalForm');
+    }
 
+    // --- Lifecycle ---
+    public function mount(?int $empruntId = null): void
+    {
         if ($this->empruntId) {
-            $emprunt=Emprunt::findOrFail($empruntId);
+            $emprunt = Emprunt::findOrFail($empruntId);
             $this->bookId = $emprunt->book_id;
-            $this->note=$emprunt->note_membre;
-            $this->dateRetourSouhaitee=$emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
+            $this->note = $emprunt->note_membre;
+            $this->dateRetourSouhaitee = $emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
         }
     }
 

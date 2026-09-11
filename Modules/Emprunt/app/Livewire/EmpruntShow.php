@@ -1,56 +1,56 @@
 <?php
+
 namespace Modules\Emprunt\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
-use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
+use Modules\Biblio\Models\Book;
 use Modules\Emprunt\Models\Emprunt;
-use Modules\Emprunt\Enums\StatutEmprunt;
 
-class EmpruntShow extends Component{
+class EmpruntShow extends Component
+{
+    // --- Données affichées ---
+    public ?int $empruntId = null;
+    public string $statut = '';
+    public ?Book $book = null;
+    public ?User $approbateur = null;
+    public ?User $recepteur = null;
+    public string $date_retour_prevue = '';
+    public string $date_retour_souhaitee = '';
+    public string $date_retour_reelle = '';
+    public string $date_emprunt = '';
+    public ?string $note_membre = null;
+    public ?string $note_bibliothecaire = null;
 
-    public ?int $empruntId=null;
-    public string $statut='';
-    public string $bookId='';
-    public string $note_membre='';
-    public string $dateRetourSouhaitee='';
-
-
-    public function openEditModal():void{
-        $this->dispatch('closeShowModal');
-        $this->dispatch('openEditModalForm',  memberId: (int) $this->memberId);
-    }
-
-    public function openConfirmDeleteModal():void{
-        $this->dispatch('closeShowModal');
-        $this->dispatch('openConfirmModalForm',  memberId: (int) $this->memberId);
-    }
-    
-    public function cancelLoanSubmitted(){
-        $this->dispatch('cancelLoanSubmitted');
-        return;
-    }
-
-    public function requestCancel() : void{
+    // --- Cancel ---
+    public function requestCancel(): void
+    {
         $this->dispatch('openCancelLoanModal', loanId: (int) $this->empruntId);
     }
 
+    // --- Lifecycle ---
     public function mount(?int $empruntId = null): void
     {
         $this->empruntId = $empruntId;
 
         if ($this->empruntId) {
-            $emprunt=Emprunt::findOrFail($empruntId);
+            $emprunt = Emprunt::with(['member.user', 'book', 'approbateur'])->findOrFail($empruntId);
             $this->empruntId = $emprunt->id;
-            $this->bookId = $emprunt->book_id;
-            $this->note_membre=$emprunt->note_membre;
-            $this->statut=$emprunt->statut->value;
-            $this->dateRetourSouhaitee=$emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
+            $this->book = $emprunt->book;
+            $this->approbateur = $emprunt->approbateur;
+            $this->recepteur = $emprunt->recepteur;
+            $this->note_membre = $emprunt->note_membre;
+            $this->note_bibliothecaire = $emprunt->{'note_bibliothecaire'};
+            $this->statut = $emprunt->statut->value;
+            $this->date_retour_prevue = $emprunt->date_retour_prevue?->format('Y-m-d') ?? '';
+            $this->date_retour_souhaitee = $emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
+            $this->date_retour_reelle = $emprunt->date_retour_reelle?->format('Y-m-d') ?? '';
+            $this->date_emprunt = $emprunt->date_emprunt?->format('Y-m-d') ?? '';
         }
     }
-    public function render(){
+
+    public function render()
+    {
         return view('emprunt::livewire.emprunt-show');
     }
 }
-
-?>

@@ -108,7 +108,6 @@
                 wire:model="dateRetourSouhaitee"
                 min="{{ now()->toDateString() }}"
                 class="block w-full rounded-lg border-gray-300 py-2.5 pl-10 pr-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-                required
             >
         </div>
         <p class="mt-1 text-xs text-gray-500">{{ __('Indicate the date on which you wish to return the book.') }}</p>
@@ -120,7 +119,7 @@
     <!-- Note -->
     <div>
         <label for="note" class="block text-sm font-medium text-gray-700">
-            {{ __('Note') }} <span class="text-xs text-gray-400">{{ __('(Optional)') }}</span>
+            {{ __('Note') }}<span class="text-red-500">*</span>
         </label>
         <div class="relative mt-1">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-start pl-3 pt-3">
@@ -130,7 +129,7 @@
                 id="note"
                 wire:model="note"
                 rows="3"
-                placeholder="{{ __('Add a note or comment...') }}"
+                placeholder="{{ __('Add a reason or comment...') }}"
                 class="block w-full resize-y rounded-lg border-gray-300 py-2.5 pl-10 pr-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
             ></textarea>
         </div>

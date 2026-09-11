@@ -52,8 +52,13 @@ Starter kit officiel **Laravel 13 + Livewire**. Auth : Breeze **Livewire** (pas 
 | Package | Version visée | Rôle | Note |
 |---------|---------------|------|------|
 | `anhskohbo/no-captcha` | ^3.8 | reCAPTCHA sur le login | Conflit avec Guzzle 8 (`no-captcha` exige Guzzle ^6\|^7). À installer plus tard en pinant Guzzle `^7.9`, ou valider reCAPTCHA via `Http`. |
-| `symfony/workflow` | ^7.0 | Machine à états des emprunts | Module Emprunt — **à installer** (playbook [07](./docs/07-feat-module-emprunt-workflow.md)) |
 | `laravel/reverb` | ^1.0 | WebSockets temps réel | Dashboard / stock live |
+
+### Installé (workflow)
+
+| Package | Version | Rôle |
+|---------|---------|------|
+| `symfony/workflow` | ^7.4 | Machine à états des emprunts |
 
 ---
 
@@ -127,26 +132,32 @@ Modules/
       Enums/
         StatutEmprunt.php           ← brouillon, en_attente, approuve, refuse, rendu ✅
       Services/
-        EmpruntWorkflowService.php  ← transitions + RG + stock (à créer)
+        EmpruntWorkflowService.php  ← transitions + RG + stock ✅
       Livewire/
-        EmpruntList.php             ← mes emprunts (membre) ou tous (admin/biblio) (à créer)
-        EmpruntForm.php             ← choisir livre + soumettre demande (à créer)
-        TableauDeBord.php           ← stats + demandes en attente (à créer)
+        MemberList / MemberForm / MemberShow   ✅
+        MesEmprunts.php             ← emprunts du membre connecté ✅
+        EmpruntForm.php             ← brouillon + soumission ✅
+        EmpruntList.php             ← tous les emprunts (admin/biblio) ✅
+        EmpruntShow / EmpruntShowAdmin         ✅
+        EmpruntApprove.php          ← approbation ✅
+        TableauDeBord.php           ← stats (à créer)
       Http/Controllers/
-        EmpruntController.php
+        EmpruntController.php / MemberController.php
       Providers/
-        EmpruntServiceProvider.php  ← enregistrer workflow Symfony (à compléter)
+        EmpruntServiceProvider.php  ← binding workflow Symfony ✅
       routes/
         web.php
     database/
       migrations/
-        create_members_table.php    ✅
-        create_emprunts_table.php   ✅
+        2026_09_01_…_create_members_table.php                              ✅
+        2026_09_01_…_create_emprunts_table.php                             ✅
+        2026_09_08_…_add_date_retour_souhaitee_to_emprunts_table.php       ✅
+        2026_09_10_…_rename_note_bibliothecaire_and_add_recu_par_….php     ✅
       seeders/
-        EmpruntSeeder.php
+        EmpruntDatabaseSeeder.php
 
 config/
-  workflow.php                      ← définition state machine emprunt (à créer)
+  workflow.php                      ← state machine emprunt ✅
 ```
 
 ---
@@ -228,21 +239,35 @@ Table SQL `books` — modèle `Book`. FK `category_id` → `categories.id`.
 | `book_id` | bigint | FK → `books.id` |
 
 ### `emprunts`
-| Colonne | Type | Contrainte |
-|---------|------|------------|
+
+Schéma **final** (création + migrations de suivi).
+
+| Colonne | Type | Contrainte / notes |
+|---------|------|--------------------|
 | `id` | bigint | PK |
 | `member_id` | bigint | FK → `members.id` NOT NULL, restrict on delete |
 | `book_id` | bigint | FK → `books.id` NOT NULL, restrict on delete |
 | `statut` | enum | `brouillon\|en_attente\|approuve\|refuse\|rendu` — cast `StatutEmprunt` |
 | `workflow_state` | string | default `'brouillon'` — marking Symfony Workflow |
-| `date_emprunt` | date | nullable |
-| `date_retour_prevue` | date | nullable |
-| `date_retour_reelle` | date | nullable |
-| `approuve_par` | bigint | FK → `users.id` nullable |
+| `date_emprunt` | date | nullable — fixée à l'approbation |
+| `date_retour_souhaitee` | date | nullable — saisie par le membre à la demande *(migration 2026-09-08)* |
+| `date_retour_prevue` | date | nullable — +14 j à l'approbation (RG-14) |
+| `date_retour_reelle` | date | nullable — fixée au retour (`rendre`) |
+| `approuve_par` | bigint | FK → `users.id` nullable — bibliothécaire qui approuve |
 | `note_membre` | text | nullable |
-| `note_bibliotécaire` | text | nullable |
+| `note_bibliothecaire` | text | nullable — renommée depuis `note_bibliotécaire` *(migration 2026-09-10)* |
+| `recu_par` | bigint | FK → `users.id` nullable — qui a validé le retour *(migration 2026-09-10)* |
 | `deleted_at` | timestamp | SoftDelete |
 | `created_at` / `updated_at` | timestamp | — |
+
+#### Historique des migrations Emprunt
+
+| Fichier | Action |
+|---------|--------|
+| `2026_09_01_110118_create_members_table` | Crée `members` |
+| `2026_09_01_110132_create_emprunts_table` | Crée `emprunts` (schéma initial) |
+| `2026_09_08_111200_add_date_retour_souhaitee_to_emprunts_table` | Ajoute `date_retour_souhaitee` |
+| `2026_09_10_111024_rename_note_bibliothecaire_and_add_recu_par_to_emprunts_table` | Renomme `note_bibliotécaire` → `note_bibliothecaire`, ajoute `recu_par` |
 
 ---
 
@@ -279,6 +304,7 @@ erDiagram
     categories ||--o{ books : "1 => 0..N (RG-05)"
     books }o--o{ authors : "N <=> N (RG-06)"
     users ||--o{ emprunts : "1 approbateur => 0..N (RG-12)"
+    users ||--o{ emprunts : "1 recepteur => 0..N (recu_par)"
 
     users {
         bigint id PK
@@ -339,9 +365,11 @@ erDiagram
         enum statut "brouillon|en_attente|approuve|refuse|rendu"
         string workflow_state "default brouillon"
         date date_emprunt "nullable"
+        date date_retour_souhaitee "nullable - membre"
         date date_retour_prevue "nullable - RG-14"
         date date_retour_reelle "nullable"
         bigint approuve_par FK "nullable => users.id - RG-12"
+        bigint recu_par FK "nullable => users.id - retour"
         text note_membre "nullable"
         text note_bibliothecaire "nullable"
         timestamp deleted_at "SoftDelete"
@@ -357,6 +385,7 @@ books          1 ──────────── 0..*   emprunts
 categories     1 ──────────── 0..*   books
 books        0..* ──────────── 0..*  authors   (via author_book)
 users          1 ──────────── 0..*   emprunts  (approbateur, clé approuve_par)
+users          1 ──────────── 0..*   emprunts  (récepteur retour, clé recu_par)
 ```
 
 ---
@@ -367,11 +396,13 @@ users          1 ──────────── 0..*   emprunts  (approbat
 |--------|---------|------|------|
 | `User` | `member()` | `hasOne` | `Member` |
 | `User` | `empruntsApprouves()` | `hasMany` | `Emprunt` (clé `approuve_par`) |
+| `User` | `empruntsRecues()` | `hasMany` | `Emprunt` (clé `recu_par`) |
 | `Member` | `user()` | `belongsTo` | `User` |
 | `Member` | `emprunts()` | `hasMany` | `Emprunt` |
 | `Emprunt` | `member()` | `belongsTo` | `Member` |
 | `Emprunt` | `book()` | `belongsTo` | `Book` |
 | `Emprunt` | `approbateur()` | `belongsTo` | `User` (clé `approuve_par`) |
+| `Emprunt` | `recepteur()` | `belongsTo` | `User` (clé `recu_par`) |
 | `Book` | `emprunts()` | `hasMany` | `Emprunt` |
 | `Book` | `category()` | `belongsTo` | `Category` |
 | `Book` | `authors()` | `belongsToMany` | `Author` (pivot `author_book`) |
@@ -470,10 +501,10 @@ EmpruntObserver            ← mails, events Reverb
 |---------|--------|
 | `Modules/Emprunt/app/Enums/StatutEmprunt.php` | ✅ |
 | `Modules/Emprunt/app/Models/Emprunt.php` (getters/setters) | ✅ |
-| `config/workflow.php` | ⬜ à créer |
-| `EmpruntServiceProvider` (binding DI) | ⬜ à compléter |
-| `Modules/Emprunt/app/Services/EmpruntWorkflowService.php` | ⬜ à créer |
-| `symfony/workflow` dans `composer.json` | ⬜ à installer |
+| `config/workflow.php` | ✅ |
+| `EmpruntServiceProvider` (binding DI) | ✅ |
+| `Modules/Emprunt/app/Services/EmpruntWorkflowService.php` | ✅ |
+| `symfony/workflow` dans `composer.json` | ✅ (^7.4) |
 
 ---
 
@@ -622,7 +653,7 @@ BROADCAST_CONNECTION=reverb
 
 ## État d'avancement
 
-Dernière mise à jour : **2026-09-01**.
+Dernière mise à jour : **2026-09-10**.
 
 ### Auth & socle ✅
 
@@ -633,28 +664,39 @@ Dernière mise à jour : **2026-09-01**.
 | `User` : SoftDeletes, `is_active`, HasRoles | ✅ |
 | i18n auth (FR/EN) | ✅ |
 | Inscription + rôle MEMBRE | ✅ |
+| Layout sidebar + `@can(...)` | ✅ |
 
-### Module Biblio 🟡
+### Module Biblio ✅
 
 | Élément | Statut |
 |---------|--------|
 | Migrations (`books`, `authors`, `categories`, pivot) | ✅ |
 | Modèles + relations | ✅ |
-| Livewire (listes, formulaires) | 🟡 en cours |
+| Livewire listes / formulaires / détails | ✅ |
 
-### Module Emprunt 🟡
+### Module Emprunt 🟡 (cœur métier quasi terminé)
 
 | Élément | Statut |
 |---------|--------|
 | Migrations `members`, `emprunts` | ✅ |
-| Modèles `Member`, `Emprunt` + relations croisées | ✅ |
+| Migration `date_retour_souhaitee` (2026-09-08) | ✅ |
+| Migration `note_bibliothecaire` + `recu_par` (2026-09-10) | ✅ |
+| Modèles `Member`, `Emprunt` + relations | ✅ |
 | Enum `StatutEmprunt` + sync workflow | ✅ |
-| Symfony Workflow (`config`, service) | ⬜ prochaine session |
-| Livewire `EmpruntForm`, `EmpruntList` | ⬜ |
-| Observers + Mails | ⬜ |
+| Symfony Workflow (`config`, provider, service) | ✅ |
+| Livewire membres (`MemberList/Form/Show`) | ✅ |
+| Livewire `MesEmprunts` + `EmpruntForm` | ✅ |
+| Livewire admin (`EmpruntList`, Show, Approve) | ✅ |
+| Transitions `demander` / `approuver` / `annuler` / `rendre` | ✅ |
+| Transition `refuser` (UI) | ⬜ bouton pas encore branché |
+| i18n module Emprunt (FR/EN) | ✅ |
+| Observers + Mails métier | ⬜ |
+| `TableauDeBord` | ⬜ |
 | Reverb temps réel | ⬜ |
+| reCAPTCHA login | ⬜ |
 
-**Suite demain :** installer `symfony/workflow`, créer `config/workflow.php` et `EmpruntWorkflowService` — voir [docs/07-feat-module-emprunt-workflow.md](./docs/07-feat-module-emprunt-workflow.md).
+**Tu es ici :** fin de l’**étape 4** (module Emprunt + workflow opérationnel).  
+**Prochaine étape logique :** UI refus (`refuser`), puis **étape 5** (Observers + mails), ou polish / seeders.
 
 ---
 
@@ -680,40 +722,41 @@ Dernière mise à jour : **2026-09-01**.
 13. Livewire `LivreList` + `LivreForm`
 14. Enregistrement dans `BiblioServiceProvider`
 
-### Étape 4 — Module Emprunt
+### Étape 4 — Module Emprunt ✅ (presque complète)
 15. `php artisan module:make Emprunt` ✅
-16. Migrations : `members`, `emprunts` ✅
+16. Migrations : `members`, `emprunts` + suivis (`date_retour_souhaitee`, `recu_par`, rename note) ✅
 17. Modèles + relations + enum `StatutEmprunt` ✅
-18. `composer require symfony/workflow` ⬜
-19. `config/workflow.php` — définir les transitions ⬜
-20. `EmpruntWorkflowService` — RG + stock + permissions ⬜
-21. Livewire `EmpruntForm` + `EmpruntList` + `TableauDeBord` ⬜
-22. Enregistrement workflow dans `EmpruntServiceProvider` ⬜
+18. `composer require symfony/workflow` ✅
+19. `config/workflow.php` — transitions ✅
+20. `EmpruntWorkflowService` — RG + stock + permissions ✅
+21. Livewire membres / mes emprunts / liste admin / approve / retour ✅
+22. Enregistrement workflow dans `EmpruntServiceProvider` ✅
+23. UI transition `refuser` ⬜
+24. `TableauDeBord` ⬜
 
 > Détail : [docs/07-feat-module-emprunt-workflow.md](./docs/07-feat-module-emprunt-workflow.md)
 
-### Étape 5 — Observers + Mail
-23. `MemberObserver` (création profil + card_number + email Bienvenue)
-24. `EmpruntObserver` (events Reverb + emails selon transition)
-25. Classes `Mailable` + templates Blade email
-26. `CheckRetardsCommand` + `scheduler`
+### Étape 5 — Observers + Mail ⬜
+25. `MemberObserver` (création profil + card_number + email Bienvenue)
+26. `EmpruntObserver` (events Reverb + emails selon transition)
+27. Classes `Mailable` + templates Blade email
+28. `CheckRetardsCommand` + `scheduler`
 
-### Étape 6 — Reverb
-27. `php artisan reverb:install`
-28. Créer les `Event` broadcastables
-29. Brancher `#[On('echo:...')]` dans les composants Livewire
+### Étape 6 — Reverb ⬜
+29. `php artisan reverb:install`
+30. Créer les `Event` broadcastables
+31. Brancher `#[On('echo:...')]` dans les composants Livewire
 
-### Étape 7 — Auth + reCAPTCHA
-30. Modifier `login.blade.php` : ajouter `{!! NoCaptcha::display() !!}`
-31. Modifier `AuthenticatedSessionController` : valider `g-recaptcha-response`
-32. Ajouter `MustVerifyEmail` dans `User.php`
+### Étape 7 — Auth + reCAPTCHA ⬜
+32. Modifier `login.blade.php` : ajouter `{!! NoCaptcha::display() !!}`
+33. Modifier `AuthenticatedSessionController` : valider `g-recaptcha-response`
+34. Ajouter `MustVerifyEmail` dans `User.php`
 
-### Étape 8 — Finitions
-33. Layout principal avec sidebar + `@can(...)`
-34. `@livewireStyles` / `@livewireScripts` dans le layout
-35. Seeders de données de test
-36. Vérification des RG dans les composants Livewire
-
+### Étape 8 — Finitions 🟡
+35. Layout principal avec sidebar + `@can(...)` ✅
+36. `@livewireStyles` / `@livewireScripts` dans le layout ✅
+37. Seeders de données de test ⬜
+38. Vérification des RG dans les composants Livewire 🟡
 ---
 
 ## Jour 1 — Module Auth complet
