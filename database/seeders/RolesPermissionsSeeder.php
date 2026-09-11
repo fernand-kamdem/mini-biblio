@@ -52,6 +52,7 @@ class RolesPermissionsSeeder extends Seeder
             'valider-retour',
             'voir-membres',
             'gérer-membres',
+            'gérer-bibliothécaires'
         ];
 
         // Parcourt la liste des permissions.
@@ -106,7 +107,6 @@ class RolesPermissionsSeeder extends Seeder
             'voir-catégories',
             'gérer-catégories',
             'voir-auteurs',
-            'voir-mes-emprunts',
             'gérer-auteurs',
             'voir-livres',
             'gérer-livres',
@@ -138,7 +138,24 @@ class RolesPermissionsSeeder extends Seeder
         //
         // Permission::all() récupère toutes les permissions
         // présentes dans la base de données.
-        $admin->syncPermissions(Permission::all());
+        $admin->syncPermissions(
+            [
+                'voir-catégories',
+                'gérer-catégories',
+                'voir-auteurs',
+                'gérer-auteurs',
+                'voir-livres',
+                'gérer-livres',
+                'supprimer-emprunt',
+                'gérer-emprunts',
+                'approuver-emprunt',
+                'refuser-emprunt',
+                'valider-retour',
+                'voir-membres',
+                'gérer-membres',
+                'gérer-bibliothécaires'
+            ]
+        );
 
         // Création du compte administrateur.
         //

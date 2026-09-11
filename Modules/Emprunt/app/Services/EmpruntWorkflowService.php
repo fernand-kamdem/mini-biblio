@@ -115,6 +115,7 @@ class EmpruntWorkflowService
         $this->assertBibliothecaireOrAdmin();
 
         $emprunt->date_retour_reelle = now()->toDateString();
+        $emprunt->recu_par=Auth::id();
 
         // Remettre la ressource disponible (stock++).
         $emprunt->book()->lockForUpdate()->first()?->increment('stock_disponible');

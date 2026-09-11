@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Emprunt\Http\Controllers\MemberController;
 use Modules\Emprunt\Http\Controllers\EmpruntController;
+use Modules\Emprunt\Http\Controllers\LibrarianController;
 
 
 Route::middleware(['auth', 'verified'])->prefix('emprunt')->group(function () {
@@ -14,6 +15,16 @@ Route::middleware(['auth', 'verified'])->prefix('emprunt')->group(function () {
                 ->name('list')
                 ->middleware('permission:voir-membres');
         });
+
+
+    Route::prefix('librarians')
+        ->name('emprunt-librarian.')
+        ->group(function () {
+            Route::get('', [LibrarianController::class, 'index'])
+                ->name('list')
+                ->middleware('permission:gérer-bibliothécaires');
+        });
+
     
     Route::prefix('emprunts')
         ->controller(EmpruntController::class)

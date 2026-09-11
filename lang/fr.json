@@ -1,7 +1,6 @@
 {
     "French": "FR",
     "English": "EN",
-
     "Library": "Bibliothèque",
     "Library manager": "Gestionnaire de bibliothèque",
     "Welcome to<br><span class=\"text-indigo-200\">your digital</span><br>library": "Bienvenue sur<br><span class=\"text-indigo-200\">votre bibliothèque</span><br>numérique",
@@ -11,7 +10,6 @@
     "© 2026 Library. All rights reserved.": "© 2026 Bibliothèque. Tous droits réservés.",
     "Need help?": "Besoin d'aide ?",
     "Contact us": "Contactez-nous",
-
     "Login": "Connexion",
     "Log in": "Se connecter",
     "Register": "Inscription",
@@ -44,7 +42,6 @@
     "Strong": "Fort",
     "Very strong": "Très fort",
     "Confirm your password": "Confirmez votre mot de passe",
-
     "Forgot your password?": "Mot de passe oublié ?",
     "Enter your email to receive a reset link": "Entrez votre email pour recevoir un lien de réinitialisation",
     "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
@@ -54,14 +51,12 @@
     "Sending...": "Envoi en cours...",
     "Back to login": "Retour à la connexion",
     "Your data is secure and protected": "Vos données sont sécurisées et protégées",
-
     "New password": "Nouveau mot de passe",
     "Choose a secure password for your account": "Choisissez un mot de passe sécurisé pour votre compte",
     "Reset Password": "Réinitialiser le mot de passe",
     "Resetting...": "Réinitialisation en cours...",
     "Passwords match": "Les mots de passe correspondent",
     "Passwords do not match": "Les mots de passe ne correspondent pas",
-
     "Verify your email": "Vérifiez votre email",
     "A verification link has been sent to your email address.": "Un lien de vérification a été envoyé à votre adresse email.",
     "A new verification link has been sent to the email address you provided during registration.": "Un nouveau lien de vérification a été envoyé à votre adresse email.",
@@ -69,10 +64,8 @@
     "Resend verification email": "Renvoyer l'email de vérification",
     "Didn't receive the email? Check your spam or": "Vous n'avez pas reçu l'email ? Vérifiez vos spams ou",
     "resend it": "renvoyez-le",
-
     "This is a secure area of the application. Please confirm your password before continuing.": "Ceci est une zone sécurisée de l'application. Veuillez confirmer votre mot de passe avant de continuer.",
     "Confirm": "Confirmer",
-
     "Books": "Livres",
     "Categories": "Catégories",
     "Catalogue": "Catalogue",
@@ -83,13 +76,12 @@
     "Overdue": "Retards",
     "Settings": "Paramètres",
     "Profile": "Profil",
-    "Browse and manage the library catalogue": "Parcourir et gérer le catalogue",
+    "Browse and manage the library catalogue": "Parcourir et gérer le catalogue de la bibliothèque",
     "Manage book authors": "Gérer les auteurs",
     "Manage book categories": "Gérer les catégories",
     "Book list will be managed here with Livewire.": "La liste des livres sera gérée ici avec Livewire.",
     "Author list will be managed here with Livewire.": "La liste des auteurs sera gérée ici avec Livewire.",
     "Category list will be managed here with Livewire.": "La liste des catégories sera gérée ici avec Livewire.",
-
     "Book": "Livre",
     "Category": "Catégorie",
     "All": "Tous",
@@ -125,10 +117,8 @@
     "Update": "Mettre à jour",
     "Create": "Créer",
     "Saving...": "Enregistrement...",
-
     "Are you sure you want to delete this book? This action cannot be undone.": "Êtes-vous sûr de vouloir supprimer ce livre ? Cette action est irréversible.",
     "Delete Book": "Supprimer le livre",
-
     "numberCategory": "Numéro",
     "nameCategory": "Nom",
     "descriptionCategory": "Description",
@@ -149,8 +139,6 @@
     "Category deleted successfully.": "Catégorie supprimée avec succès.",
     "View": "Voir",
     "Book detail": "Détail du livre",
-    "Browse and manage the library catalogue": "Parcourir et gérer le catalogue de la bibliothèque",
-
     "Surname": "Prénom",
     "Biography": "Biographie",
     "Search an author": "Rechercher un auteur",
@@ -170,7 +158,6 @@
     "Author created successfully.": "Auteur créé avec succès.",
     "Author updated successfully.": "Auteur mis à jour avec succès.",
     "Author deleted successfully.": "Auteur supprimé avec succès.",
-
     "Dashboard": "Tableau de bord",
     "Timesheets": "Feuilles de temps",
     "Profile Information": "Informations du profil",
@@ -229,7 +216,6 @@
     "A new verification link has been sent to your email address.": "Un nouveau lien de vérification a été envoyé à votre adresse e-mail.",
     "Verify email": "Vérifier l'e-mail",
     "Reset password": "Réinitialiser le mot de passe",
-
     "Manage book members": "Gérer les membres",
     "Search an member": "Rechercher un membre",
     "Search by name or card number...": "Rechercher par nom ou numéro de carte...",
@@ -254,7 +240,6 @@
     "noMemberFound": "Aucun membre trouvé",
     "Member created succesfully": "Membre créé avec succès",
     "Member updated succesfully": "Membre mis à jour avec succès",
-
     "Active": "Actif",
     "Disabled": "Désactivé",
     "Inactive": "Inactif",
@@ -281,7 +266,6 @@
     "results": "résultats",
     "Previous": "Précédent",
     "Next": "Suivant",
-
     "Vos identifiants de connexion": "Vos identifiants de connexion",
     "Bienvenue": "Bienvenue",
     "Bonjour :name": "Bonjour :name",
@@ -295,7 +279,6 @@
     "Here are your credentials:": "Voici vos identifiants :",
     "Please change this password after your first login.": "Changez ce mot de passe après la première connexion.",
     "Thank you": "Merci",
-
     "Loan information": "Informations de l'emprunt",
     "Select a book": "Sélectionner un livre",
     "No Book Available": "Aucun livre disponible",
@@ -319,7 +302,6 @@
     "Approved": "Approuvé",
     "Refused": "Refusé",
     "Note": "Note",
-
     "My loans": "Mes emprunts",
     "View and manage your loans": "Consultez et gérez vos emprunts",
     "Manage book loans": "Gérer les emprunts de livres",
@@ -354,14 +336,38 @@
     "An error is come": "Une erreur est survenue",
     "Vous devez être un membre pour emprunter un livre": "Vous devez être un membre pour emprunter un livre",
     "You must be a member to borrow a book": "Vous devez être un membre pour emprunter un livre",
-
     "Delete Member": "Supprimer le membre",
     "Are you sure you want to delete this member? This action cannot be undone.": "Êtes-vous sûr de vouloir supprimer ce membre ? Cette action est irréversible.",
     "Member deleted successfully": "Membre supprimé avec succès",
     "An error occurred while deleting the member": "Une erreur est survenue lors de la suppression du membre",
-
     "Approve": "Approuver",
     "Refuse": "Refuser",
     "Reopen": "Rouvrir",
-    "Return book": "Retourner"
+    "Return book": "Retourner",
+    "Actual return": "Retour réel",
+    "Actual return date": "Date de retour réelle",
+    "Add a note about the return condition, delay, etc...": "Ajouter une note sur l'état du retour, le retard, etc...",
+    "Add a reason or comment...": "Ajouter un motif ou un commentaire...",
+    "Approve Loan": "Approuver l'emprunt",
+    "Approved by": "Approuvé par",
+    "Approving...": "Approbation...",
+    "Borrowed on": "Emprunté le",
+    "Cancel Ask": "Annuler la demande",
+    "Dates": "Dates",
+    "Desired return": "Retour souhaité",
+    "Expected return": "Retour prévu",
+    "Librarian note": "Note du bibliothécaire",
+    "Loan": "Emprunt",
+    "Loan reason": "Motif de l'emprunt",
+    "No Loan Available": "Aucun emprunt disponible",
+    "Please enter the actual return date and add a note before approving this loan.": "Veuillez saisir la date de retour réelle et ajouter une note avant d'approuver cet emprunt.",
+    "You must be a member to edit a loan": "Vous devez être un membre pour modifier un emprunt",
+    "Loan approved successfully": "Emprunt approuvé avec succès",
+    "Loan approval error": "Erreur lors de l'approbation de l'emprunt",
+    "All librarians": "Tous les bibliothécaires",
+    "User": "Utilisateur",
+    "Loan returned successfully": "Emprunt marqué comme rendu avec succès",
+    "An error occurred while returning the loan": "Une erreur s'est produite lors du retour de l'emprunt",
+    "Detail": "Détail",
+    "Received by": "Reçu par"
 }

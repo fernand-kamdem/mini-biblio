@@ -12,9 +12,13 @@ use Modules\Emprunt\Livewire\MemberList;
 use Modules\Emprunt\Livewire\MemberForm;
 use Modules\Emprunt\Livewire\MemberShow;
 use Modules\Emprunt\Livewire\EmpruntList;
+use Modules\Emprunt\Livewire\LibrarianList;
 use Modules\Emprunt\Livewire\EmpruntForm;
 use Modules\Emprunt\Livewire\MesEmprunts;
 use Modules\Emprunt\Livewire\EmpruntShow;
+use Modules\Emprunt\Livewire\EmpruntApprove;
+use Modules\Emprunt\Livewire\EmpruntRefuse;
+use Modules\Emprunt\Livewire\EmpruntShowAdmin;
 
 /**
  * Provider du module Emprunt.
@@ -152,8 +156,12 @@ class EmpruntServiceProvider extends ModuleServiceProvider
         Livewire::component('emprunt::member-form', MemberForm::class);
         Livewire::component('emprunt::member-show', MemberShow::class);
         Livewire::component('emprunt::emprunt-list', EmpruntList::class);
+        Livewire::component('emprunt::librarian-list', LibrarianList::class);
         Livewire::component('emprunt::emprunt-form', EmpruntForm::class);
         Livewire::component('emprunt::mes-emprunts', MesEmprunts::class);
         Livewire::component('emprunt::emprunt-show', EmpruntShow::class);
+        Livewire::component('emprunt::emprunt-show-admin', EmpruntShowAdmin::class);
+        Livewire::component('emprunt::emprunt-approve', EmpruntApprove::class);
+        Livewire::component('emprunt::emprunt-refuse', EmpruntRefuse::class);
     }
 }

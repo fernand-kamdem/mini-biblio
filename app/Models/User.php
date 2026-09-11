@@ -73,4 +73,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Emprunt::class, 'approuve_par');        
     }
+
+
+    public function empruntsRecues():HasMany
+    {
+        return $this->hasMany(Emprunt::class, 'recu_par');        
+    }
 }

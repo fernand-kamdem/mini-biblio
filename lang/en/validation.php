@@ -188,8 +188,13 @@ return [
     | of "email". This simply helps us make our message more expressive.
     |
     */
-
-    'attributes' => []
-    ,
+    
+    'attributes' => [
+        // Exemple :
+         'current_password' => 'current password',
+         'password' => 'password',
+         'bookId' => 'book',
+         'dateRetourSouhaitee' => 'desired return date'
+    ],
 
 ];

@@ -144,26 +144,7 @@ new #[Layout('layouts.guest')] class extends Component
         <input type="hidden" name="token" value="{{ $token ?? '' }}">
 
         <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email Address')" class="text-sm font-medium text-gray-700" />
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-envelope text-gray-400"></i>
-                </div>
-                <x-text-input 
-                    wire:model="email" 
-                    id="email" 
-                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150" 
-                    type="email" 
-                    name="email" 
-                    required 
-                    autofocus 
-                    autocomplete="username"
-                    placeholder="votre@email.com"
-                />
-            </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-600" />
-        </div>
+        <input type="hidden" name="email" wire:model="email" value="{{ $email ?? '' }}">
 
         <!-- Password -->
         <div>
@@ -208,7 +189,7 @@ new #[Layout('layouts.guest')] class extends Component
                     <i class="fas fa-check-circle text-gray-400"></i>
                 </div>
                 <x-text-input
-                    wire:model="password_confirmation"
+                    wire:model.live="password_confirmation"
                     id="password_confirmation"
                     class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150"
                     type="{{ $showPasswordConfirmation ? 'text' : 'password' }}"

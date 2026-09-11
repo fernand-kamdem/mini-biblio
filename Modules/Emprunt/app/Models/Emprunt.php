@@ -28,10 +28,11 @@ class Emprunt extends Model
         'date_retour_prevue',
         'date_retour_reelle',
         'approuve_par',
+        'recu_par',
         'note_membre',
-        'note_bibliotécaire',
+        'note_bibliothecaire',  
     ];
-
+    
     protected $casts = [
         'statut' => StatutEmprunt::class,
         'date_emprunt' => 'date',
@@ -53,6 +54,11 @@ class Emprunt extends Model
     public function approbateur():BelongsTo
     {
         return $this->belongsTo(User::class, 'approuve_par');        
+    }
+
+    public function recepteur():BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recu_par');        
     }
 
     //methode pour lire l'etat actuel de l'objet (getter)
