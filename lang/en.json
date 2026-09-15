@@ -369,5 +369,14 @@
     "Loan returned successfully": "Loan returned successfully",
     "An error occurred while returning the loan": "An error occurred while returning the loan",
     "Detail": "Detail",
-    "Received by": "Received by"
+    "Received by": "Received by",
+
+    "_comment_notifications_ui": "Notification payload message_key keys + NotificationBell header labels",
+    "notifications.emprunt_soumis": "New loan request pending",
+    "notifications.emprunt_approve": "Your loan has been approved",
+    "notifications.emprunt_refuse": "Your loan has been refused",
+    "Notifications": "Notifications",
+    "No notifications": "No notifications",
+    "Mark all as read": "Mark all as read",
+    "Notification": "Notification"
 }
