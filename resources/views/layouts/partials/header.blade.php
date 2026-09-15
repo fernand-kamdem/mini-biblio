@@ -33,19 +33,15 @@
                 <input type="text" placeholder="Rechercher..." class="w-40 border-none bg-transparent text-sm outline-none transition-all duration-300 focus:w-56 lg:w-48 lg:focus:w-64">
             </div>
 
-            <!-- Notifications -->
-            <div class="relative">
-                <button type="button" class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600">
-                    <i class="fas fa-bell text-lg"></i>
-                    <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">3</span>
-                </button>
-            </div>
-
-            <!-- Messages -->
-            <button type="button" class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600">
-                <i class="fas fa-envelope text-lg"></i>
-                <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-500 text-[10px] font-bold text-white">5</span>
-            </button>
+            {{--
+              Cloche notifications (Livewire).
+              - Composant : App\Livewire\NotificationBell
+              - Visible uniquement si authentifié (@auth)
+              - Remplace l’ancien badge hardcodé / count Blade brut
+            --}}
+            @auth
+                <livewire:notification-bell />
+            @endauth
 
             <!-- Séparateur -->
             <div class="mx-1 hidden h-8 w-px bg-gray-200 sm:block"></div>

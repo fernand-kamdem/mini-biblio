@@ -369,5 +369,14 @@
     "Loan returned successfully": "Emprunt marqué comme rendu avec succès",
     "An error occurred while returning the loan": "Une erreur s'est produite lors du retour de l'emprunt",
     "Detail": "Détail",
-    "Received by": "Reçu par"
+    "Received by": "Reçu par",
+
+    "_comment_notifications_ui": "Clés message_key (payload notifs) + libellés cloche header NotificationBell",
+    "notifications.emprunt_soumis": "Nouvelle demande d'emprunt en attente",
+    "notifications.emprunt_approve": "Votre demande d'emprunt a été approuvée",
+    "notifications.emprunt_refuse": "Votre demande d'emprunt a été refusée",
+    "Notifications": "Notifications",
+    "No notifications": "Aucune notification",
+    "Mark all as read": "Tout marquer comme lu",
+    "Notification": "Notification"
 }

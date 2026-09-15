@@ -8,15 +8,27 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
+use Modules\Emprunt\Events\EmpruntApprove;
+use Modules\Emprunt\Events\EmpruntRefuse;
+use Modules\Emprunt\Events\EmpruntSoumis;
 
 class EmpruntWorkflowService
 {
+    /**
+     * Applique une transition workflow puis, après commit, dispatch les events de notif.
+     *
+     * Events / personnes notifiées :
+     * - demander  → EmpruntSoumis   → tous ADMIN + BIBLIOTHECAIRE
+     * - approuver → EmpruntApprove  → membre propriétaire (member.user)
+     * - refuser   → EmpruntRefuse   → membre propriétaire (member.user)
+     * - rendre / annuler → aucun event notif pour l’instant
+     */
     public function apply(Emprunt $emprunt, string $transition): void
     {
-        //Récupère le service singleton défini dans votre EmpruntServiceProvider
+        // Récupère le service singleton défini dans EmpruntServiceProvider
         $workflow = app('workflow.emprunt');
 
-        //Vérifie si la transition est possible pour l'état actuel de l'objet Ex: on ne peut pas approuver un emprunt qui n'est pas en attente
+        // Vérifie si la transition est possible pour l'état actuel
         if (! $workflow->can($emprunt, $transition)) {
             throw new LogicException(
                 "Transition [{$transition}] impossible depuis [{$emprunt->workflow_state}]."
@@ -33,13 +45,20 @@ class EmpruntWorkflowService
                 default     => throw new InvalidArgumentException("Transition inconnue : {$transition}"),
             };
 
-            //Applique la transition à l'objet
             $workflow->apply($emprunt, $transition);
-            //Enregistre l'objet dans la base de données
             $emprunt->save();
         });
+
+        // Effets de bord après commit (listeners → notifications database)
+        match ($transition) {
+            'demander'  => event(new EmpruntSoumis($emprunt)),   // → ADMIN + BIBLIOTHECAIRE
+            'approuver' => event(new EmpruntApprove($emprunt)),  // → membre propriétaire
+            'refuser'   => event(new EmpruntRefuse($emprunt)),   // → membre propriétaire
+            default     => null,
+        };
     }
 
+    
     /**
      * Seul le propriétaire de l'emprunt (celui qui l'a créé) peut le soumettre.
      * RG-09 : stock disponible > 0
