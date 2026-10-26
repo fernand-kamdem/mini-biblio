@@ -4,7 +4,7 @@
     <!-- Logo et nom de l'application -->
     <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-200">
         <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <i class="fas fa-book-open text-lg text-white"></i>
+            <x-application-logo class="h-6 w-6 text-white" />
         </div>
         <div>
             <h1 class="text-xl font-bold text-gray-900">Biblio</h1>

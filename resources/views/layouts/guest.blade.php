@@ -7,6 +7,11 @@
 
     <title>@yield('title', config('app.name', 'Laravel'))</title>
 
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -26,7 +31,7 @@
             <div class="relative z-10">
                 <div class="flex items-center gap-3 text-white">
                     <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-book-open text-2xl text-white"></i>
+                        <x-application-logo class="h-7 w-7 text-white" />
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold tracking-tight">{{ __('Library') }}</h1>
@@ -80,7 +85,7 @@
                 <div class="lg:hidden flex justify-center mb-8">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-book-open text-2xl text-white"></i>
+                            <x-application-logo class="h-7 w-7 text-white" />
                         </div>
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">{{ __('Library') }}</h1>
