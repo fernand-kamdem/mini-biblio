@@ -112,10 +112,10 @@
                             
                         </td>
                         <td class="px-4 py-3 text-center align-middle">
-                            <span class="text-sm text-gray-600"> {{ $emprunt->date_emprunt?->format('Y-m-d') ?? '—' }}</span>
+                            <span class="text-sm text-gray-600"> {{ $emprunt->date_emprunt?->format('d/m/Y') ?? '—' }}</span>
                         </td>
                         <td class="px-4 py-3 text-center align-middle">
-                            <span class="text-sm text-gray-600">{{ $emprunt->date_retour_reelle ? $emprunt->date_retour_reelle?->format('Y-m-d') : $emprunt->date_retour_souhaitee?->format('Y-m-d')}}</span>
+                            <span class="text-sm text-gray-600">{{ $emprunt->date_retour_reelle ? $emprunt->date_retour_reelle?->format('d/m/Y') : $emprunt->date_retour_souhaitee?->format('d/m/Y')}}</span>
                         </td>
                         <td class="px-4 py-3 text-center align-middle">
                             @php
@@ -138,7 +138,7 @@
                         </td>
                         <td class="px-4 py-3 text-center align-middle">
                             <div class="flex justify-center gap-1">
-                                @if(in_array($emprunt->statut, [\Modules\Emprunt\Enums\StatutEmprunt::EnAttente, \Modules\Emprunt\Enums\StatutEmprunt::Approuve]))
+                                @if(in_array($emprunt->statut, [\Modules\Emprunt\Enums\StatutEmprunt::EnAttente, \Modules\Emprunt\Enums\StatutEmprunt::Approuve, \Modules\Emprunt\Enums\StatutEmprunt::Refuse, \Modules\Emprunt\Enums\StatutEmprunt::Rendu]))
                                     <button type="button" wire:click="openDetailsModal({{ $emprunt->id }})" class="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600" title="{{ __('View') }}">
                                         <i class="fas fa-eye text-sm"></i>
                                     </button>

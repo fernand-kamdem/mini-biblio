@@ -10,7 +10,7 @@
                 @php
                     $statusColor = match($statut) {
                         'en_attente'  => 'bg-yellow-100 text-yellow-800',
-                        'retourne'    => 'bg-green-100 text-green-800',
+                        'rendu'    => 'bg-green-100 text-green-800',
                         'en_retard'   => 'bg-red-100 text-red-800',
                         'annule'      => 'bg-gray-100 text-gray-800',
                         'refuse'      => 'bg-red-100 text-red-800',
@@ -18,7 +18,7 @@
                     };
                     $dotColor = match($statut) {
                         'en_attente'  => 'bg-yellow-600',
-                        'retourne'    => 'bg-green-600',
+                        'rendu'    => 'bg-green-600',
                         'en_retard'   => 'bg-red-600',
                         'annule'      => 'bg-gray-600',
                         'refuse'      => 'bg-red-600',

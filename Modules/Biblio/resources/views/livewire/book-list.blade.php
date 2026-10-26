@@ -76,7 +76,7 @@
                         @endcan
 
                         <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">
-                            {{ __('Annee de parution') }}
+                            {{ __('Publication year') }}
                         </th>
 
                         <th class="hidden px-4 py-3 text-center align-middle text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
@@ -140,24 +140,27 @@
                                             </button>   
 
                                         {{-- bouton emprunter --}}
-                                        @if($book->stock_disponible > 0)
-                                            <button
-                                                type="button"
-                                                class="rounded-lg p-1.5 text-gray-400 hover:bg-green-50 hover:text-green-600"
-                                                title="{{ __('Borrow') }}"
-                                            >
-                                                <i class="fas fa-hand-holding text-sm"></i>
-                                            </button>
-                                        @else
-                                            <button
-                                                type="button"
-                                                disabled
-                                                class="rounded-lg p-1.5 text-gray-300 cursor-not-allowed"
-                                                title="{{ __('Unavailable') }}"
-                                            >
-                                                <i class="fas fa-times-circle text-sm"></i>
-                                            </button>
-                                        @endif
+                                        @can('créer-emprunt')
+                                            @if($book->stock_disponible > 0)
+                                                <button
+                                                    type="button"
+                                                    wire:click="openLoanModalForm"
+                                                    class="rounded-lg p-1.5 text-gray-400 hover:bg-green-50 hover:text-green-600"
+                                                    title="{{ __('Borrow') }}"
+                                                >
+                                                    <i class="fas fa-hand-holding text-sm"></i>
+                                                </button>
+                                            @else
+                                                <button
+                                                    type="button"
+                                                    disabled
+                                                    class="rounded-lg p-1.5 text-gray-300 cursor-not-allowed"
+                                                    title="{{ __('Unavailable') }}"
+                                                >
+                                                    <i class="fas fa-times-circle text-sm"></i>
+                                                </button>
+                                            @endif
+                                        @endcan
 
 
                                     @can('gérer-livres')
@@ -223,6 +226,33 @@
                     <livewire:biblio::book-form
                         :book-id="$editingId"
                         :key="'book-form-'.($editingId ?? 'new')"
+                    />
+                </div>
+            </div>
+        </div>
+    @endif
+
+
+    @if ($showLoanModalForm)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-xl">
+                <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        {{ __('New loan') }}
+                    </h4>
+                    <button
+                        type="button"
+                        wire:click="closeLoanModalForm"
+                        class="rounded-lg p-1.5 text-red-400 hover:bg-gray-100 hover:text-gray-600"
+                        title="{{ __('Close') }}"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="px-6 py-5">
+                    {{-- :key = recrée le formulaire quand on change create ↔ edit --}}
+                    <livewire:emprunt::emprunt-form
+                        :key="'emprunt-form-'.('new')"
                     />
                 </div>
             </div>

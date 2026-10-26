@@ -18,10 +18,13 @@ class DatabaseSeeder extends Seeder
             BiblioDatabaseSeeder::class,
         ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-        
+        // Compte de test (mot de passe « password » de la factory) :
+        // uniquement en local, jamais sur un serveur.
+        if (app()->isLocal()) {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        }
     }
 }

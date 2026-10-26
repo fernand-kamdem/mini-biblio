@@ -96,6 +96,11 @@ class EmpruntForm extends Component
     // --- Submit (demande) ---
     public function submit(EmpruntWorkflowService $workflow): void
     {
+        if(! Auth::user()?->can(['créer-emprunt']) 
+            && !Auth::user()?->can('modifier-emprunt')){
+            return;
+        }
+
         if ($this->empruntId) {
             $validated = $this->validate([
                 'bookId' => ['required', 'exists:books,id'],
@@ -172,7 +177,7 @@ class EmpruntForm extends Component
             $emprunt = Emprunt::findOrFail($empruntId);
             $this->bookId = $emprunt->book_id;
             $this->note = $emprunt->note_membre;
-            $this->dateRetourSouhaitee = $emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
+            $this->dateRetourSouhaitee = $emprunt->date_retour_souhaitee?->format('d/m/Y') ?? '';
         }
     }
 
