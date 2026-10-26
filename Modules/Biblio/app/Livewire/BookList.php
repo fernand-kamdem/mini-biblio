@@ -52,6 +52,12 @@ class BookList extends Component
         // BookDetails
         'editBookFromDetails' => 'editFromDetails',
         'deleteBookFromDetails' => 'deleteFromDetails',
+
+        'closeModalForm' => 'closeLoanModalForm',
+        'loanDraftCreated' => 'handleLoanDraftCreated',
+        'loanSubmitCreated' => 'handleLoanSubmitCreated',
+        'loanDraftUpdated' => 'handleLoanDraftUpdated',
+        'loanForbidden' => 'handleLoanForbidden'
     ];
 
     // =========================================================================
@@ -61,6 +67,8 @@ class BookList extends Component
     public string $search = '';
 
     public string $categoryId = '';
+
+    public bool $showLoanModalForm = false;
 
     /** Reset page 1 quand un filtre change (évite page vide) */
     public function updatingSearch(): void
@@ -91,6 +99,16 @@ class BookList extends Component
 
         $this->editingId = null;
         $this->showFormModal = true;
+    }
+
+    public function openLoanModalForm (): void
+    {
+        $this->showLoanModalForm = true;
+    }
+
+    public function closeLoanModalForm (): void
+    {
+        $this->showLoanModalForm = false;
     }
 
     public function showEditModal(int $bookId): void
@@ -198,6 +216,33 @@ class BookList extends Component
         $this->closeDetailModal();
         $this->showConfirmDelete($bookId);
     }
+
+
+    public function handleLoanDraftCreated(): void
+    {
+        $this->closeLoanModalForm();
+        session()->flash('success', __('Loan created succesfully'));
+    }
+
+    public function handleLoanDraftUpdated(): void
+    {
+        $this->closeLoanModalForm();
+        session()->flash('success', __('Loan update succesfully'));
+    }
+
+    public function handleLoanSubmitCreated(): void
+    {
+        $this->closeLoanModalForm();
+        session()->flash('success', __('Loan submmited succesfully'));
+    }
+
+    public function handleLoanForbidden(string $message): void
+    {
+        $this->closeLoanModalForm();
+        session()->flash('error', $message);
+    }
+
+
 
     // =========================================================================
     // 5. RENDER
