@@ -50,10 +50,10 @@ class EmpruntShowAdmin extends Component
             $this->note_membre = $emprunt->note_membre;
             $this->note_bibliothecaire = $emprunt->note_bibliothecaire;
             $this->statut = $emprunt->statut->value;
-            $this->date_retour_prevue = $emprunt->date_retour_prevue?->format('Y-m-d') ?? '';
-            $this->date_retour_souhaitee = $emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
-            $this->date_retour_reelle = $emprunt->date_retour_reelle?->format('Y-m-d') ?? '';
-            $this->date_emprunt = $emprunt->date_emprunt?->format('Y-m-d') ?? '';
+            $this->date_retour_prevue = $emprunt->date_retour_prevue?->format('d/m/Y') ?? '';
+            $this->date_retour_souhaitee = $emprunt->date_retour_souhaitee?->format('d/m/Y') ?? '';
+            $this->date_retour_reelle = $emprunt->date_retour_reelle?->format('d/m/Y') ?? '';
+            $this->date_emprunt = $emprunt->date_emprunt?->format('d/m/Y') ?? '';
         }
     }
 

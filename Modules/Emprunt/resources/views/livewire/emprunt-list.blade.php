@@ -108,10 +108,10 @@
                                     
                                 </td>
                                 <td class="px-4 py-3 text-center align-middle">
-                                    <span class="text-sm text-gray-600"> {{ $emprunt->date_emprunt?->format('Y-m-d') ?? '—' }}</span>
+                                    <span class="text-sm text-gray-600"> {{ $emprunt->date_emprunt?->format('d/m/Y') ?? '—' }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center align-middle">
-                                    <span class="text-sm text-gray-600">{{ $emprunt->date_retour_prevue ? $emprunt->date_retour_prevue?->format('Y-m-d') : $emprunt->date_retour_souhaitee?->format('Y-m-d') }}</span>
+                                    <span class="text-sm text-gray-600">{{ $emprunt->date_retour_prevue ? $emprunt->date_retour_prevue?->format('d/m/Y') : $emprunt->date_retour_souhaitee?->format('d/m/Y') }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center align-middle">
                                 @php
@@ -146,7 +146,7 @@
                                         @endif
                                         
                                         @if(in_array($emprunt->statut, [\Modules\Emprunt\Enums\StatutEmprunt::EnAttente]))
-                                            <button type="button" wire:click="openModalApprove({{ $emprunt->id }})" class="rounded-lg p-1.5 text-green-700 hover:bg-green-50 hover:text-green-700" title="{{ __('Approve') }}">
+                                            <button type="button" wire:click="openModalApprove({{ $emprunt->id }})" class="rounded-lg p-1.5 text-blue-700 hover:bg-blue-50 hover:text-blue-700" title="{{ __('Approve') }}">
                                                 <i class="fas fa-check text-sm"></i>
                                             </button>
                                             <button type="button" wire:click="openModalRefuse({{ $emprunt->id }})" class="rounded-lg p-1.5 text-red-600 hover:bg-red-50 hover:text-red-700" title="{{ __('Refuse') }}">

@@ -8,6 +8,8 @@ use Modules\Emprunt\Models\Emprunt;
 use Modules\Emprunt\Services\EmpruntWorkflowService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Url;
+
 
 class EmpruntList extends Component
 {
@@ -15,7 +17,11 @@ class EmpruntList extends Component
 
     // --- Filtres ---
     public string $search = '';
+
+    #[Url]
     public string $status = '';
+
+    #[Url]
     public bool $onlyLate = false;
 
     // --- État des modales ---
@@ -110,15 +116,15 @@ class EmpruntList extends Component
     }
 
     public function handleErrorApprove(){
-        session()->flash('error', __('unse erreur dest produite'));
+        session()->flash('error', __('An error occurred while approving the loan'));
     }
 
     public function handleSuccessRefuse(){
-        session()->flash('success', __('Loan Refused successfully'));
+        session()->flash('success', __('Loan refused successfully'));
     }
 
     public function handleErrorRefuse(){
-        session()->flash('error', __('unse erreur sest produite'));
+        session()->flash('error', __('An error occurred while refusing the loan'));
     }
 
 
