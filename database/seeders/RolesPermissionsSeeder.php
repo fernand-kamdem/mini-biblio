@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -52,7 +53,7 @@ class RolesPermissionsSeeder extends Seeder
             'valider-retour',
             'voir-membres',
             'gérer-membres',
-            'gérer-bibliothécaires'
+            'gérer-bibliothécaires',
         ];
 
         // Parcourt la liste des permissions.
@@ -131,7 +132,7 @@ class RolesPermissionsSeeder extends Seeder
             'voir-mes-emprunts',
             'annuler-emprunt',
             'modifier-emprunt',
-            'supprimer-emprunt'
+            'supprimer-emprunt',
         ]);
 
         // L'administrateur reçoit toutes les permissions existantes.
@@ -153,7 +154,7 @@ class RolesPermissionsSeeder extends Seeder
                 'valider-retour',
                 'voir-membres',
                 'gérer-membres',
-                'gérer-bibliothécaires'
+                'gérer-bibliothécaires',
             ]
         );
 
@@ -162,11 +163,15 @@ class RolesPermissionsSeeder extends Seeder
         // firstOrCreate() vérifie d'abord si l'adresse e-mail existe.
         // Si elle existe, l'utilisateur n'est pas recréé.
         // Sinon, un nouveau compte est créé.
+        //
+        // L'e-mail et le mot de passe viennent du .env (via config/seeders.php).
+        $admin = $this->credentials('admin');
+
         $userAdmin = User::firstOrCreate(
-            ['email' => 'admin@mail.com'],
+            ['email' => $admin['email']],
             [
                 'name' => 'Administrateur',
-                'password' => 'password',
+                'password' => $admin['password'],
                 'email_verified_at' => now(),
 
                 // Le compte est actif dès sa création.
@@ -178,11 +183,13 @@ class RolesPermissionsSeeder extends Seeder
         $userAdmin->syncRoles(['ADMIN']);
 
         // Création du compte bibliothécaire.
+        $biblio = $this->credentials('biblio');
+
         $userBiblio = User::firstOrCreate(
-            ['email' => 'biblio@mail.com'],
+            ['email' => $biblio['email']],
             [
                 'name' => 'Bibliothécaire',
-                'password' => 'password',
+                'password' => $biblio['password'],
                 'email_verified_at' => now(),
 
                 // Le compte est actif dès sa création.
@@ -192,5 +199,29 @@ class RolesPermissionsSeeder extends Seeder
 
         // Attribue le rôle BIBLIOTHECAIRE au compte.
         $userBiblio->syncRoles(['BIBLIOTHECAIRE']);
+    }
+
+    /**
+     * Récupère l'e-mail et le mot de passe d'un compte de base
+     * depuis config/seeders.php, alimenté par le .env.
+     *
+     * Arrête le seeder si une valeur manque, pour ne jamais
+     * créer un compte sans e-mail ou sans mot de passe.
+     *
+     * @return array{email: string, password: string}
+     */
+    private function credentials(string $account): array
+    {
+        $credentials = config("seeders.{$account}");
+
+        foreach (['email', 'password'] as $key) {
+            if (blank($credentials[$key] ?? null)) {
+                $variable = 'SEED_'.strtoupper($account).'_'.strtoupper($key);
+
+                throw new RuntimeException("Valeur manquante : renseignez {$variable} dans le .env.");
+            }
+        }
+
+        return $credentials;
     }
 }
