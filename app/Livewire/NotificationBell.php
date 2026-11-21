@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 /**
@@ -131,7 +132,7 @@ class NotificationBell extends Component
         $this->refreshNotifications();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.notification-bell');
     }

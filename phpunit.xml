@@ -32,5 +32,10 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Comptes de base créés par RolesPermissionsSeeder dans la base de test -->
+        <env name="SEED_ADMIN_EMAIL" value="admin@mail.com"/>
+        <env name="SEED_ADMIN_PASSWORD" value="password"/>
+        <env name="SEED_BIBLIO_EMAIL" value="biblio@mail.com"/>
+        <env name="SEED_BIBLIO_PASSWORD" value="password"/>
     </php>
 </phpunit>

@@ -13,9 +13,10 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // Serveur de démonstration : vrai catalogue et emprunts fictifs à la place des données aléatoires.
         $this->call([
             RolesPermissionsSeeder::class,
-            BiblioDatabaseSeeder::class,
+            config('demo.enabled') ? DemoSeeder::class : BiblioDatabaseSeeder::class,
         ]);
 
         // Compte de test (mot de passe « password » de la factory) :

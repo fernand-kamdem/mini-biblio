@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 
 return [
@@ -188,13 +187,13 @@ return [
     | of "email". This simply helps us make our message more expressive.
     |
     */
-    
+
     'attributes' => [
         // Exemple :
-         'current_password' => 'current password',
-         'password' => 'password',
-         'bookId' => 'book',
-         'dateRetourSouhaitee' => 'desired return date'
+        'current_password' => 'current password',
+        'password' => 'password',
+        'bookId' => 'book',
+        'dateRetourSouhaitee' => 'desired return date',
     ],
 
 ];

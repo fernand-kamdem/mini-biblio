@@ -2,71 +2,76 @@
 
 namespace Modules\Biblio\Livewire;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Modules\Biblio\Models\Author;
-use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
-class AuthorList extends Component{
 
-    public string $search='';
-    public ?int $editingId=null;
-    public ?int $authorIdToDelete=null;
-    public ?int $authorId=null;
-    public bool $showFormModal=false;
-    public bool $showConfirmDeleteForm=false;
-    public bool $showDetailView=false;
+class AuthorList extends Component
+{
+    public string $search = '';
 
-    protected $listeners=
-    [
-        'closeFormModal'=>'closeFormModal',
-        'closeAuthorView'=>'closeDetailView',
-        'showAuthorEdit'=>'showEditModal',
-        'showAuthorDelete'=>'showDeleteModal',
-        'authorCreated'=>'handleAuthorCreated',
-        'authorUpdated'=>'handleAuthorUpdated'
-    ];
+    public ?int $editingId = null;
 
-    public function showCreateModal():void
+    public ?int $authorIdToDelete = null;
+
+    public ?int $authorId = null;
+
+    public bool $showFormModal = false;
+
+    public bool $showConfirmDeleteForm = false;
+
+    public bool $showDetailView = false;
+
+    protected $listeners =
+        [
+            'closeFormModal' => 'closeFormModal',
+            'closeAuthorView' => 'closeDetailView',
+            'showAuthorEdit' => 'showEditModal',
+            'showAuthorDelete' => 'showDeleteModal',
+            'authorCreated' => 'handleAuthorCreated',
+            'authorUpdated' => 'handleAuthorUpdated',
+        ];
+
+    public function showCreateModal(): void
     {
-        $this->editingId=null;
-        $this->showFormModal=true;
+        $this->editingId = null;
+        $this->showFormModal = true;
     }
 
-    public function showEditModal(int $authorId):void
+    public function showEditModal(int $authorId): void
     {
-        $this->editingId=$authorId;
-        $this->showFormModal=true;
+        $this->editingId = $authorId;
+        $this->showFormModal = true;
     }
 
-    public function openDetailView(int $authorId):void
+    public function openDetailView(int $authorId): void
     {
-        $this->authorId=$authorId;
-        $this->showDetailView=true;
+        $this->authorId = $authorId;
+        $this->showDetailView = true;
     }
 
-    public function closeDetailView():void
+    public function closeDetailView(): void
     {
-        $this->authorId=null;
-        $this->showDetailView=false;
+        $this->authorId = null;
+        $this->showDetailView = false;
     }
 
-
-    public function showDeleteModal(int $authorId):void
+    public function showDeleteModal(int $authorId): void
     {
-        $this->authorIdToDelete=$authorId;
-        $this->showConfirmDeleteForm=true;
+        $this->authorIdToDelete = $authorId;
+        $this->showConfirmDeleteForm = true;
     }
 
-    public function closeFormModal():void
+    public function closeFormModal(): void
     {
-        $this->editingId=null;
-        $this->showFormModal=false;
+        $this->editingId = null;
+        $this->showFormModal = false;
     }
 
-    public function closeDeleteModal():void
+    public function closeDeleteModal(): void
     {
-        $this->authorIdToDelete=null;
-        $this->showConfirmDeleteForm=false;
+        $this->authorIdToDelete = null;
+        $this->showConfirmDeleteForm = false;
     }
 
     public function handleAuthorCreated(): void
@@ -81,16 +86,16 @@ class AuthorList extends Component{
         session()->flash('success', __('Author updated successfully.'));
     }
 
-    public function deleteAuthor():void
+    public function deleteAuthor(): void
     {
-        if(!Auth::user()?->can('gérer-auteurs')){
+        if (! Auth::user()?->can('gérer-auteurs')) {
             return;
         }
-        $author=Author::find($this->authorIdToDelete);
-        if($author){
+        $author = Author::find($this->authorIdToDelete);
+        if ($author) {
             $author->delete();
             session()->flash('success', __('Author deleted successfully.'));
-        }else{
+        } else {
             session()->flash('error', __('Author not found.'));
         }
         $this->closeDeleteModal();
@@ -98,17 +103,17 @@ class AuthorList extends Component{
 
     public function render()
     {
-        $authors=Author::query()
-        ->when($this->search!='', function($query){
-            $query->where('nom', 'ilike', '%'.$this->search.'%')
-            ->orWhere('prenom', 'ilike', '%'.$this->search.'%');
-        })
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+        $authors = Author::query()
+            ->when($this->search != '', function ($query) {
+                $query->whereLike('nom', '%'.$this->search.'%')
+                    ->orWhereLike('prenom', '%'.$this->search.'%');
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
         return view('biblio::livewire.author-list', [
-            'authors'=>$authors,
+            'authors' => $authors,
             'totalAuthors' => Author::count(),
         ]);
     }
 }
-?>

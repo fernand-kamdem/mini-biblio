@@ -11,15 +11,25 @@ class EmpruntShow extends Component
 {
     // --- Données affichées ---
     public ?int $empruntId = null;
+
     public string $statut = '';
+
     public ?Book $book = null;
+
     public ?User $approbateur = null;
+
     public ?User $recepteur = null;
+
     public string $date_retour_prevue = '';
+
     public string $date_retour_souhaitee = '';
+
     public string $date_retour_reelle = '';
+
     public string $date_emprunt = '';
+
     public ?string $note_membre = null;
+
     public ?string $note_bibliothecaire = null;
 
     // --- Cancel ---

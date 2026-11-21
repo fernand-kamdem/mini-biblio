@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Biblio\Database\Factories\BookFactory;
 use Modules\Emprunt\Models\Emprunt;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
@@ -36,9 +36,9 @@ class Book extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function emprunts():HasMany
+    public function emprunts(): HasMany
     {
-        return $this->hasMany(Emprunt::class);        
+        return $this->hasMany(Emprunt::class);
     }
 
     protected static function newFactory(): BookFactory

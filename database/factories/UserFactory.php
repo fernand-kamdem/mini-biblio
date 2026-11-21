@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'is_active' => true,
         ];
     }
 
@@ -41,5 +42,21 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Compte d'un bibliothécaire (rôle BIBLIOTHECAIRE).
+     */
+    public function bibliothecaire(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole('BIBLIOTHECAIRE'));
+    }
+
+    /**
+     * Compte d'un administrateur (rôle ADMIN).
+     */
+    public function administrateur(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole('ADMIN'));
     }
 }

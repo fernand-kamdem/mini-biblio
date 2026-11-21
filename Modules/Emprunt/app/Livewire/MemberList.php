@@ -17,10 +17,15 @@ class MemberList extends Component
 
     // --- État des modales ---
     public ?int $editingId = null;
+
     public ?int $viewingId = null;
+
     public ?int $deletingId = null;
+
     public bool $showModalForm = false;
+
     public bool $showModalDetails = false;
+
     public bool $showConfirmDeleteForm = false;
 
     protected $listeners = [
@@ -131,9 +136,9 @@ class MemberList extends Component
         $members = Member::with('user')
             ->when($this->search != '', function ($query) {
                 $query->where(function ($q) {
-                    $q->where('card_number', 'ilike', '%'.$this->search.'%')
+                    $q->whereLike('card_number', '%'.$this->search.'%')
                         ->orWhereHas('user', function ($userQuery) {
-                            $userQuery->where('name', 'ilike', '%'.$this->search.'%');
+                            $userQuery->whereLike('name', '%'.$this->search.'%');
                         });
                 });
             })

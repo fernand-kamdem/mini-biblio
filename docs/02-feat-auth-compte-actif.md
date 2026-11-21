@@ -1,13 +1,13 @@
-# 2 — Branche `feat/auth-login-easyday`
+# 2 â€” Branche `feat/auth-compte-actif`
 
-**But :** calquer Easy Day-O (`is_active` + middleware + alias Spatie + SoftDeletes) **sans** casser register / verify / forgot.
+**But :** gÃ©rer les comptes actifs (`is_active` + middleware + alias Spatie + SoftDeletes) **sans** casser register / verify / forgot.
 
 ```bash
-git checkout feat/auth-breeze-livewire   # ou master après merge
-git checkout -b feat/auth-login-easyday
+git checkout feat/auth-breeze-livewire   # ou master aprÃ¨s merge
+git checkout -b feat/auth-compte-actif
 ```
 
-## Fichiers à créer
+## Fichiers Ã  crÃ©er
 
 ### `database/migrations/xxxx_add_is_active_column_to_users_table.php`
 
@@ -17,7 +17,7 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-`default(true)` : tout nouveau membre est actif. Un admin pourra passer à `false`.
+`default(true)` : tout nouveau membre est actif. Un admin pourra passer Ã  `false`.
 
 ### `database/migrations/xxxx_add_soft_deletes_to_users_table.php`
 
@@ -34,23 +34,23 @@ Suppression douce (README mini-biblio). **Ne pas** ajouter `username` unique ici
 Ordre **obligatoire** :
 
 1. Si `! Auth::check()` ? `$next` (sinon crash visiteur : `user()` est `null`)
-2. Si `Auth::user()->is_active ?? true` ? `$next` (`?? true` : `null` n’est pas traité comme désactivé, utile avec `actingAs` / factory)
+2. Si `Auth::user()->is_active ?? true` ? `$next` (`?? true` : `null` nâ€™est pas traitÃ© comme dÃ©sactivÃ©, utile avec `actingAs` / factory)
 3. Sinon `logout()` + redirect `login` + flash `error`
 
 Ne **pas** lire `Auth::user()->is_active` **avant** `Auth::check()`.
 
-Voir le fichier actuel du repo pour le code commenté complet.
+Voir le fichier actuel du repo pour le code commentÃ© complet.
 
-## Fichiers à modifier
+## Fichiers Ã  modifier
 
 ### `bootstrap/app.php`
 
 | Ajout | Commentaire |
 |--------|-------------|
-| `use App\Http\Middleware\IsActive;` | Sans ça : `Class IsActive not found` |
-| `use Spatie\Permission\Middleware\PermissionMiddleware;` | Alias pour `->middleware('permission:…')` |
+| `use App\Http\Middleware\IsActive;` | Sans Ã§a : `Class IsActive not found` |
+| `use Spatie\Permission\Middleware\PermissionMiddleware;` | Alias pour `->middleware('permission:â€¦')` |
 | `use Spatie\Permission\Middleware\RoleMiddleware;` | Idem `role` |
-| `$middleware->alias(['permission' => …, 'role' => …]);` | Comme Easy Day-O |
+| `$middleware->alias(['permission' => â€¦, 'role' => â€¦]);` | Middlewares `permission:` et `role:` utilisables dans les routes |
 | `$middleware->appendToGroup('web', [IsActive::class]);` | Toutes les routes web |
 
 ### `app/Models/User.php`
@@ -58,9 +58,9 @@ Voir le fichier actuel du repo pour le code commenté complet.
 | Modification | Commentaire |
 |--------------|-------------|
 | `use SoftDeletes;` | Avec la migration |
-| `'is_active' => 'boolean'` dans `casts()` | Évite 0/1 ambigus |
-| `MustVerifyEmail` **conservé** | Contrairement à Easy Day-O |
-| Un seul fillable | Si `#[Fillable]` + `$fillable`, l’attribut peut **ignorer** `is_active` |
+| `'is_active' => 'boolean'` dans `casts()` | Ã‰vite 0/1 ambigus |
+| `MustVerifyEmail` **conservÃ©** | VÃ©rification de lâ€™e-mail Ã  lâ€™inscription |
+| Un seul fillable | Si `#[Fillable]` + `$fillable`, lâ€™attribut peut **ignorer** `is_active` |
 
 ### `database/factories/UserFactory.php`
 
@@ -68,7 +68,7 @@ Voir le fichier actuel du repo pour le code commenté complet.
 'is_active' => true,
 ```
 
-**Indispensable** : `actingAs($user)` réutilise le modèle **en mémoire**. Sans `is_active`, la valeur est `null` ; le cast boolean peut donner `false` ; `IsActive` redirige en 302 ; tests dashboard / verify-email / confirm-password **rouges**.
+**Indispensable** : `actingAs($user)` rÃ©utilise le modÃ¨le **en mÃ©moire**. Sans `is_active`, la valeur est `null` ; le cast boolean peut donner `false` ; `IsActive` redirige en 302 ; tests dashboard / verify-email / confirm-password **rouges**.
 
 Option :
 
@@ -89,13 +89,13 @@ Sous le status Breeze, afficher le flash du middleware :
 @endif
 ```
 
-`IsActive` envoie `session('error')`, Breeze n’affiche que `session('status')`.
+`IsActive` envoie `session('error')`, Breeze nâ€™affiche que `session('status')`.
 
 ### `app/Livewire/Forms/LoginForm.php`
 
 **Laisser le login par `email`** (vue `form.email`).  
-Le blocage compte inactif est dans **`IsActive`**, pas forcément dans le Form (Easy Day-O).  
-Throttle + remember : déjà Breeze, ne pas casser.
+Le blocage compte inactif est dans **`IsActive`**, pas dans le formulaire de connexion.  
+Throttle + remember : dÃ©jÃ  Breeze, ne pas casser.
 
 ## Commandes
 
@@ -104,11 +104,11 @@ php artisan migrate
 php artisan test --filter=Auth
 ```
 
-Test manuel : `UPDATE users SET is_active = 0 WHERE email = '…'` puis accès dashboard ? login + message.
+Test manuel : `UPDATE users SET is_active = 0 WHERE email = 'â€¦'` puis accÃ¨s dashboard ? login + message.
 
-## Tests Auth — 302 au lieu de 200
+## Tests Auth â€” 302 au lieu de 200
 
-Cause habituelle : factory sans `is_active` + middleware trop tôt.  
+Cause habituelle : factory sans `is_active` + middleware trop tÃ´t.  
 Pas un bug Breeze. Corriger factory + ordre `IsActive`.
 
 ## Commit

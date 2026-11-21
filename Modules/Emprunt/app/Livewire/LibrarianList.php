@@ -2,11 +2,11 @@
 
 namespace Modules\Emprunt\Livewire;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\User;
 
 class LibrarianList extends Component
 {
@@ -17,10 +17,15 @@ class LibrarianList extends Component
 
     // --- État des modales ---
     public ?int $editingId = null;
+
     public ?int $viewingId = null;
+
     public ?int $deletingId = null;
+
     public bool $showModalForm = false;
+
     public bool $showModalDetails = false;
+
     public bool $showConfirmDeleteForm = false;
 
     protected $listeners = [
@@ -130,7 +135,7 @@ class LibrarianList extends Component
         $librarians = User::query()
             ->role('BIBLIOTHECAIRE')
             ->when($this->search != '', function ($query) {
-                $query->where('name', 'ilike', '%'.$this->search.'%');
+                $query->whereLike('name', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);

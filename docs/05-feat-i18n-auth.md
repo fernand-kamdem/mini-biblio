@@ -2,7 +2,7 @@
 
 **But :** internationalisation FR / EN sur les pages **guest auth** (layout + login / register / forgot / reset / verify). Préférence de langue en session ; persistée en base si l’utilisateur est connecté.
 
-Référence Easy Day-O : `SetLocale`, `/lang/{locale}`, colonne langue user, sélecteur conditionné — **sans** copier Borex.
+Briques : `SetLocale`, `/lang/{locale}`, colonne langue user, sélecteur conditionné.
 
 ```bash
 git checkout master   # après merge UI auth

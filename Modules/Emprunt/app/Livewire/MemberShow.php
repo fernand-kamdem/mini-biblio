@@ -9,12 +9,19 @@ class MemberShow extends Component
 {
     // --- Données affichées ---
     public ?int $memberId = null;
+
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $card_number = '';
+
     public string $address = '';
+
     public string $registration_date = '';
+
     public bool $is_active = false;
 
     // --- Edit ---

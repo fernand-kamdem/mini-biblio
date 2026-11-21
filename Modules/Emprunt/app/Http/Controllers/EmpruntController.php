@@ -3,7 +3,6 @@
 namespace Modules\Emprunt\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class EmpruntController extends Controller
 {
@@ -15,9 +14,8 @@ class EmpruntController extends Controller
         return view('emprunt::emprunts.index');
     }
 
-    public function myLoans(){
+    public function myLoans()
+    {
         return view('emprunt::emprunts.mes-emprunts');
     }
-
-   
 }

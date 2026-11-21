@@ -92,7 +92,7 @@
     <div class="border-t border-gray-200 p-4">
         <div class="flex items-center gap-3 px-2">
             <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
-                {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'U' }}
+                {{ auth()->user()?->initials() ?? 'U' }}
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate">

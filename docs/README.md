@@ -2,11 +2,13 @@
 
 Guides **branche par branche** pour reproduire le projet (auth → modules → profil → emprunts UI).
 
+Documentation technique complète (modèle de données, règles de gestion, UML, workflow) et journal de développement : [journal-de-bord.md](./journal-de-bord.md).
+
 | Ordre | Branche | Fichier | Objectif | Statut |
 |------:|---------|---------|----------|--------|
 | 0 | — | [00-machine-et-laravel-new.md](./00-machine-et-laravel-new.md) | Composer, Boost, SQLite tests, Git SSH | ✅ |
 | 1 | `feat/auth-breeze-livewire` | [01-feat-auth-breeze-livewire.md](./01-feat-auth-breeze-livewire.md) | Login, register, verify, reset, remember | ✅ |
-| 2 | `feat/auth-login-easyday` | [02-feat-auth-login-easyday.md](./02-feat-auth-login-easyday.md) | `is_active`, `IsActive`, Spatie aliases, SoftDeletes | ✅ |
+| 2 | `feat/auth-compte-actif` | [02-feat-auth-compte-actif.md](./02-feat-auth-compte-actif.md) | `is_active`, `IsActive`, Spatie aliases, SoftDeletes | ✅ |
 | 3 | `feat/auth-roles-spatie` | [03-feat-auth-roles-spatie.md](./03-feat-auth-roles-spatie.md) | Rôles ADMIN / BIBLIOTHECAIRE / MEMBRE + seed | ✅ |
 | 4 | `feat/auth-ui-livewire` | [04-feat-auth-ui-livewire.md](./04-feat-auth-ui-livewire.md) | Layout split-screen, toggles Livewire, barre de force | ✅ |
 | 5 | `feat/i18n-auth` | [05-feat-i18n-auth.md](./05-feat-i18n-auth.md) | Locale FR/EN, switcher guest, `users.language` | ✅ |
@@ -25,4 +27,3 @@ Raccourci `laravel new` : [setup_new_project.md](./setup_new_project.md).
 **Cores génériques (Bureau, hors repo) :**  
 `~/Desktop/laravel-symfony-workflow-core.md` · `~/Desktop/laravel-notifications-core.md`
 
-Référence métier : projet `easy_days_o_laravel` (Breeze Volt + middleware compte actif, **sans** copier Borex ni SSO Microsoft).

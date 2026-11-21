@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('emprunts', function (Blueprint $table) {
+            // Renommer d'abord : MySQL applique after() et attend le nouveau nom de colonne.
+            $table->renameColumn('note_bibliotécaire', 'note_bibliothecaire');
+
             $table->foreignId('recu_par')
                 ->after('note_bibliothecaire')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-            
-            $table->renameColumn('note_bibliotécaire', 'note_bibliothecaire');
         });
     }
 

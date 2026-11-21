@@ -2,16 +2,19 @@
 
 namespace Modules\Emprunt\Livewire;
 
+use DomainException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Modules\Emprunt\Models\Emprunt;
 use Modules\Emprunt\Services\EmpruntWorkflowService;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 class EmpruntRefuse extends Component
 {
     // --- Données du formulaire ---
     public ?int $empruntId = null;
+
     public ?string $note_bibliothecaire = null;
 
     // --- Refuse ---
@@ -29,21 +32,16 @@ class EmpruntRefuse extends Component
             'note_bibliothecaire' => ['required', 'string', 'max:255'],
         ]);
 
-        DB::transaction(function () use ($validated, $workflow) {
-            $emprunt = Emprunt::findOrFail($this->empruntId);
-            try {
-                $emprunt->update([
-                    'note_bibliothecaire' => $validated['note_bibliothecaire'],
-                ]);
+        $emprunt = Emprunt::findOrFail($this->empruntId);
+        $emprunt->note_bibliothecaire = $validated['note_bibliothecaire'];
 
-                $workflow->apply($emprunt, 'refuser');
-
-                $this->successRefuse();
-            } catch (\Throwable $th) {
-
-                $this->errorRefuse();
-            }
-        });
+        try {
+            // Le motif n'est enregistré qu'avec la transition : en cas d'échec, rien ne change.
+            $workflow->apply($emprunt, 'refuser');
+            $this->successRefuse();
+        } catch (DomainException|AuthorizationException|LogicException $exception) {
+            $this->dispatch('errorRefuse', message: $exception->getMessage());
+        }
 
         $this->requestCancelRefuse();
     }
@@ -67,11 +65,6 @@ class EmpruntRefuse extends Component
     public function successRefuse(): void
     {
         $this->dispatch('successRefuse');
-    }
-
-    public function errorRefuse(): void
-    {
-        $this->dispatch('errorRefuse');
     }
 
     public function render()

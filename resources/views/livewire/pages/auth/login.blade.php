@@ -23,6 +23,21 @@ new #[Layout('layouts.guest')] class extends Component
 
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
+
+    /**
+     * Démonstration : connexion en un clic avec l'un des comptes publics de config/demo.php.
+     */
+    public function loginAsDemo(string $account): void
+    {
+        $demoAccount = config("demo.accounts.{$account}");
+
+        abort_unless(config('demo.enabled') && is_array($demoAccount), 404);
+
+        $this->form->email = $demoAccount['email'];
+        $this->form->password = config('demo.password');
+
+        $this->login();
+    }
 }; ?>
 
 @section('title', config('app.name') . ' | ' . __('Login'))
@@ -35,6 +50,42 @@ new #[Layout('layouts.guest')] class extends Component
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+
+    @if (config('demo.enabled'))
+        <!-- Comptes de démonstration -->
+        <section class="rounded-xl border border-indigo-200 bg-indigo-50 p-4" aria-labelledby="titre-demo">
+            <h3 id="titre-demo" class="text-sm font-semibold text-indigo-900">
+                <i class="fas fa-flask mr-1"></i>
+                {{ __('Try the demo') }}
+            </h3>
+            <p class="mt-1 text-xs text-indigo-800">
+                {{ __('Choose a role to sign in. Fictitious data, reset every night.') }}
+            </p>
+            <div class="mt-3 grid gap-2 sm:grid-cols-3">
+                @foreach (config('demo.accounts') as $key => $account)
+                    <button
+                        type="button"
+                        wire:click="loginAsDemo('{{ $key }}')"
+                        wire:loading.attr="disabled"
+                        class="rounded-lg border border-indigo-200 bg-white px-3 py-2 text-left transition hover:border-indigo-400 hover:shadow-sm disabled:opacity-60"
+                    >
+                        <span class="block text-sm font-medium text-gray-900">
+                            {{ match ($account['role']) {
+                                'ADMIN' => __('Administrator'),
+                                'BIBLIOTHECAIRE' => __('Librarian'),
+                                default => __('Member'),
+                            } }}
+                        </span>
+                        <span class="block truncate text-xs text-gray-500">{{ $account['email'] }}</span>
+                    </button>
+                @endforeach
+            </div>
+            <p class="mt-3 text-xs text-indigo-800">
+                {{ __('Password for every demo account:') }}
+                <code class="rounded bg-white px-1.5 py-0.5 font-semibold text-indigo-900">{{ config('demo.password') }}</code>
+            </p>
+        </section>
+    @endif
 
     <form wire:submit="login" class="space-y-6">
         <!-- Email Address -->
@@ -53,7 +104,7 @@ new #[Layout('layouts.guest')] class extends Component
                     required 
                     autofocus 
                     autocomplete="username"
-                    placeholder="votre@email.com"
+                    placeholder="{{ __('you@example.com') }}"
                 />
             </div>
             <x-input-error :messages="$errors->get('form.email')" class="mt-2 text-sm text-red-600" />

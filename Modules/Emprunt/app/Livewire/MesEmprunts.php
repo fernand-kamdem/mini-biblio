@@ -4,9 +4,9 @@ namespace Modules\Emprunt\Livewire;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Modules\Emprunt\Enums\StatutEmprunt;
 use Modules\Emprunt\Models\Emprunt;
 use Modules\Emprunt\Services\EmpruntWorkflowService;
 
@@ -16,17 +16,28 @@ class MesEmprunts extends Component
 
     // --- Filtres ---
     public string $search = '';
+
+    #[Url]
     public string $status = '';
+
+    #[Url]
     public bool $onlyLate = false;
 
     // --- État des modales ---
     public ?int $editingId = null;
+
     public ?int $viewingId = null;
+
     public ?int $deletingId = null;
+
     public ?int $cancelLoanId = null;
+
     public bool $showModalForm = false;
+
     public bool $showDeleteModalForm = false;
+
     public bool $showModalDetails = false;
+
     public bool $showCancelLoanModalForm = false;
 
     protected $listeners = [
@@ -186,24 +197,21 @@ class MesEmprunts extends Component
     // --- Render ---
     public function render()
     {
-        $emprunts = Emprunt::with(['member.user', 'book', 'approbateur'])
+        $emprunts = Emprunt::with(['member.user', 'book.authors', 'approbateur'])
             ->whereHas('member', function ($q) {
                 $q->where('user_id', Auth::id());
             })
             ->when($this->search != '', function ($query) {
                 $query->where(function ($q) {
                     $q->whereHas('book', function ($bookQuery) {
-                        $bookQuery->where('titre', 'ilike', '%'.$this->search.'%');
+                        $bookQuery->whereLike('titre', '%'.$this->search.'%');
                     });
                 });
             })
             ->when($this->status !== '', function ($query) {
                 $query->where('statut', $this->status);
             })
-            ->when($this->onlyLate, function ($query) {
-                $query->where('statut', StatutEmprunt::Approuve)
-                    ->where('date_retour_prevue', '<', now());
-            })
+            ->when($this->onlyLate, fn ($query) => $query->enRetard())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

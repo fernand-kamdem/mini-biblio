@@ -48,9 +48,8 @@
                         wire:model.live='onlyLate'
                         class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
                     >
-                        <option value="">{{ __('All loans') }}</option>
-                        <option value="true">{{ __('Late only') }}</option>
-                        <option value="false">{{ __('Not late') }}</option>
+                        <option value="0">{{ __('All loans') }}</option>
+                        <option value="1">{{ __('Late only') }}</option>
                     </select>
                 </div>
             </div>
@@ -100,7 +99,7 @@
                                     <p class="font-medium text-gray-900 truncate max-w-xs">{{ $emprunt?->book?->titre }}</p>
                                     @forelse($emprunt?->book?->authors as $author)
                                         <p class="text-xs text-gray-500 truncate max-w-xs">
-                                        {{ $author->name }}
+                                        {{ trim($author->prenom.' '.$author->nom) }}
                                         </p>
                                     @empty
                                         {{ __('No Author')}}

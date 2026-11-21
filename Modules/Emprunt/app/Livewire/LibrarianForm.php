@@ -14,8 +14,11 @@ class LibrarianForm extends Component
 {
     // --- Champs du formulaire ---
     public ?int $librarianId = null;
+
     public string $name = '';
+
     public string $email = '';
+
     public bool $is_active = false;
 
     // --- Create / Update ---
@@ -33,7 +36,7 @@ class LibrarianForm extends Component
                 'email' => [
                     'required', 'string', 'lowercase', 'email', 'max:255',
                     Rule::unique(User::class)->ignore($librarian->id),
-                ]
+                ],
             ]);
 
             DB::transaction(function () use ($librarian, $validated) {
@@ -99,7 +102,7 @@ class LibrarianForm extends Component
         if ($this->librarianId) {
             $librarian = User::findOrFail($this->librarianId);
             $this->name = $librarian->name;
-            $this->email = $librarian->email;;
+            $this->email = $librarian->email;
         }
     }
 

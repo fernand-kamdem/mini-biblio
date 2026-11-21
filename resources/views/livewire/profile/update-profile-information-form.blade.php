@@ -33,6 +33,12 @@ new class extends Component
         $user = Auth::user();
         $member = $user->member;
 
+        if ($user->isDemoAccount()) {
+            $this->addError('email', __('Demo accounts cannot be changed.'));
+
+            return;
+        }
+
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],

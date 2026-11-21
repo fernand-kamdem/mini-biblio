@@ -186,10 +186,10 @@ return [
 
     'attributes' => [
         // Exemple :
-         'current_password' => 'mot de passe actuel',
-         'password' => 'mot de passe',
-         'bookId' => 'livre',
-         'dateRetourSouhaitee' => 'date retour souhaitee'
+        'current_password' => 'mot de passe actuel',
+        'password' => 'mot de passe',
+        'bookId' => 'livre',
+        'dateRetourSouhaitee' => 'date retour souhaitee',
     ],
 
 ];
