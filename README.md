@@ -23,7 +23,15 @@
 - **Bibliothécaires** : gérer le catalogue et les membres, approuver ou refuser les demandes, enregistrer les retours.
 - **Administrateurs** : tout cela, plus la gestion des bibliothécaires.
 
-Chaque emprunt suit un parcours strict, le stock reste juste même quand deux approbations arrivent en même temps, et l'interface est disponible en français et en anglais.
+Chaque emprunt suit un parcours strict, le stock reste juste même quand deux approbations arrivent en même temps, et l'interface est disponible en français et en anglais. Chaque rôle arrive sur un tableau de bord calculé sur les données réelles : demandes en attente, retards, stock critique, emprunts en cours.
+
+## Démonstration
+
+Avec `DEMO_MODE=true` dans le `.env` :
+
+- `php artisan migrate --seed` charge un catalogue de 20 titres, des membres et des emprunts fictifs (dont des retards) ;
+- la page de connexion propose trois comptes de démonstration (membre, bibliothécaire, administrateur), qui ne peuvent être ni modifiés ni supprimés ;
+- `php artisan demo:reset` remet tout à zéro. La commande est planifiée chaque nuit (`DEMO_RESET_AT`, 3 h par défaut) : ajoutez `php artisan schedule:run` aux tâches cron du serveur, chaque minute.
 
 ## Stack
 

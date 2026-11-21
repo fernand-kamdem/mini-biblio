@@ -3,6 +3,7 @@
 namespace Modules\Biblio\Livewire;
 
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Modules\Biblio\Models\Book;
@@ -57,13 +58,14 @@ class BookList extends Component
         'loanDraftCreated' => 'handleLoanDraftCreated',
         'loanSubmitCreated' => 'handleLoanSubmitCreated',
         'loanDraftUpdated' => 'handleLoanDraftUpdated',
-        'loanForbidden' => 'handleLoanForbidden'
+        'loanForbidden' => 'handleLoanForbidden',
     ];
 
     // =========================================================================
     // 1. FILTRES & PAGINATION
     // =========================================================================
 
+    #[Url]
     public string $search = '';
 
     public string $categoryId = '';
@@ -101,12 +103,12 @@ class BookList extends Component
         $this->showFormModal = true;
     }
 
-    public function openLoanModalForm (): void
+    public function openLoanModalForm(): void
     {
         $this->showLoanModalForm = true;
     }
 
-    public function closeLoanModalForm (): void
+    public function closeLoanModalForm(): void
     {
         $this->showLoanModalForm = false;
     }
@@ -217,7 +219,6 @@ class BookList extends Component
         $this->showConfirmDelete($bookId);
     }
 
-
     public function handleLoanDraftCreated(): void
     {
         $this->closeLoanModalForm();
@@ -242,8 +243,6 @@ class BookList extends Component
         session()->flash('error', $message);
     }
 
-
-
     // =========================================================================
     // 5. RENDER
     // =========================================================================
@@ -254,15 +253,19 @@ class BookList extends Component
             ->with(['category', 'authors']) // eager-load → évite N+1
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($query) {
-                    // ilike = PostgreSQL (insensible à la casse)
-                    $query->where('titre', 'ilike', '%'.$this->search.'%')
-                        ->orWhere('isbn', 'ilike', '%'.$this->search.'%');
+                    // whereLike est insensible à la casse sur PostgreSQL, MySQL et SQLite.
+                    $query->whereLike('titre', '%'.$this->search.'%')
+                        ->orWhereLike('isbn', '%'.$this->search.'%')
+                        ->orWhereHas('authors', function ($authorQuery) {
+                            $authorQuery->whereLike('nom', '%'.$this->search.'%')
+                                ->orWhereLike('prenom', '%'.$this->search.'%');
+                        });
                 });
             })
             ->when($this->categoryId !== '', function ($query) {
                 $query->where('category_id', $this->categoryId);
             })
-            ->orderBy('created_at', 'desc')
+            ->orderBy('titre')
             ->paginate(10);
 
         return view('biblio::livewire.book-list', [

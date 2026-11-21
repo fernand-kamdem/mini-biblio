@@ -2,14 +2,12 @@
 
 namespace Modules\Emprunt\Livewire;
 
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Modules\Emprunt\Models\Emprunt;
 use Modules\Emprunt\Services\EmpruntWorkflowService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Url;
-
 
 class EmpruntList extends Component
 {
@@ -26,11 +24,16 @@ class EmpruntList extends Component
 
     // --- État des modales ---
     public ?int $viewingId = null;
+
     public ?int $approvingId = null;
+
     public ?int $refusingId = null;
+
     public bool $showModalDetails = false;
+
     public bool $showModalApprove = false;
-    public bool $showModalRefuse=false;
+
+    public bool $showModalRefuse = false;
 
     protected $listeners = [
         'closeModalApprove' => 'closeApproveModal',
@@ -110,24 +113,25 @@ class EmpruntList extends Component
         $this->resetPage();
     }
 
-
-    public function handleSuccessApprove(){
+    public function handleSuccessApprove()
+    {
         session()->flash('success', __('Loan approved successfully'));
     }
 
-    public function handleErrorApprove(){
-        session()->flash('error', __('An error occurred while approving the loan'));
+    public function handleErrorApprove(?string $message = null): void
+    {
+        session()->flash('error', $message ?? __('An error occurred while approving the loan'));
     }
 
-    public function handleSuccessRefuse(){
+    public function handleSuccessRefuse()
+    {
         session()->flash('success', __('Loan refused successfully'));
     }
 
-    public function handleErrorRefuse(){
-        session()->flash('error', __('An error occurred while refusing the loan'));
+    public function handleErrorRefuse(?string $message = null): void
+    {
+        session()->flash('error', $message ?? __('An error occurred while refusing the loan'));
     }
-
-
 
     public function retourner(EmpruntWorkflowService $workflow, int $empruntId): void
     {
@@ -149,24 +153,23 @@ class EmpruntList extends Component
     // --- Render ---
     public function render()
     {
-        $emprunts = Emprunt::with(['member.user', 'book', 'approbateur'])
+        $emprunts = Emprunt::with(['member.user', 'book.authors', 'approbateur'])
             ->when($this->search != '', function ($query) {
                 $query->where(function ($q) {
                     $q->whereHas('member', function ($memberQuery) {
-                        $memberQuery->where('card_number', 'ilike', '%'.$this->search.'%')
+                        $memberQuery->whereLike('card_number', '%'.$this->search.'%')
                             ->orWhereHas('user', function ($userQuery) {
-                                $userQuery->where('name', 'ilike', '%'.$this->search.'%');
+                                $userQuery->whereLike('name', '%'.$this->search.'%');
                             });
+                    })->orWhereHas('book', function ($bookQuery) {
+                        $bookQuery->whereLike('titre', '%'.$this->search.'%');
                     });
                 });
             })
             ->when($this->status !== '', function ($query) {
                 $query->where('statut', $this->status);
             })
-            ->when($this->onlyLate, function ($query) {
-                $query->where('statut', 'approuve')
-                    ->where('date_retour_prevue', '<', now());
-            })
+            ->when($this->onlyLate, fn ($query) => $query->enRetard())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

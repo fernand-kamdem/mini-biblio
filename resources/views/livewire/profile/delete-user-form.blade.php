@@ -25,6 +25,12 @@ new class extends Component
      */
     public function deleteUser(Logout $logout): void
     {
+        if (Auth::user()->isDemoAccount()) {
+            $this->addError('password', __('Demo accounts cannot be changed.'));
+
+            return;
+        }
+
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
         ]);

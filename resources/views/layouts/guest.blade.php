@@ -34,8 +34,8 @@
                         <x-application-logo class="h-7 w-7 text-white" />
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight">{{ __('Library') }}</h1>
-                        <p class="text-white/80 text-sm">{{ __('Library manager') }}</p>
+                        <h1 class="text-2xl font-bold tracking-tight">{{ config('app.name') }}</h1>
+                        <p class="text-white/80 text-sm">{{ __('Library management') }}</p>
                     </div>
                 </div>
 
@@ -47,31 +47,25 @@
                         {{ __('Efficiently manage your books, members and loans in a centralized and secure space.') }}
                     </p>
 
-                    <div class="grid grid-cols-2 gap-4 mt-8">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                            <div class="flex items-center gap-3 text-white">
-                                <i class="fas fa-book text-xl text-indigo-200"></i>
-                                <div>
-                                    <p class="text-2xl font-bold">+1200</p>
-                                    <p class="text-sm text-white/70">{{ __('Available books') }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                            <div class="flex items-center gap-3 text-white">
-                                <i class="fas fa-users text-xl text-indigo-200"></i>
-                                <div>
-                                    <p class="text-2xl font-bold">+450</p>
-                                    <p class="text-sm text-white/70">{{ __('Active members') }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ul class="mt-8 space-y-3 text-white">
+                        <li class="flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                            <i class="fas fa-book w-6 text-center text-xl text-indigo-200"></i>
+                            <span>{{ __('An online catalog, with the stock of every book') }}</span>
+                        </li>
+                        <li class="flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                            <i class="fas fa-route w-6 text-center text-xl text-indigo-200"></i>
+                            <span>{{ __('Every loan followed from request to return') }}</span>
+                        </li>
+                        <li class="flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                            <i class="fas fa-bell w-6 text-center text-xl text-indigo-200"></i>
+                            <span>{{ __('Late loans spotted automatically') }}</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
             <div class="relative z-10 text-white/60 text-sm">
-                <p>{{ __('© 2026 Library. All rights reserved.') }}</p>
+                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('All rights reserved.') }}</p>
             </div>
         </div>
 
@@ -88,8 +82,8 @@
                             <x-application-logo class="h-7 w-7 text-white" />
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">{{ __('Library') }}</h1>
-                            <p class="text-sm text-gray-500">{{ __('Library manager') }}</p>
+                            <h1 class="text-2xl font-bold text-gray-900">{{ config('app.name') }}</h1>
+                            <p class="text-sm text-gray-500">{{ __('Library management') }}</p>
                         </div>
                     </div>
                 </div>

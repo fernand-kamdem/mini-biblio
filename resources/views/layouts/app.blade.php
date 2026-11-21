@@ -36,10 +36,11 @@
         <!-- ============================================ -->
         <!-- CONTENU PRINCIPAL                             -->
         <!-- ============================================ -->
-        <div class="flex-1 flex flex-col min-h-screen lg:ml-64">
+        <div class="flex-1 flex flex-col min-h-screen min-w-0 lg:ml-64">
             <!-- ============================================ -->
             <!-- HEADER - Barre de navigation supérieure      -->
             <!-- ============================================ -->
+            @include('layouts.partials.demo-banner')
             @include('layouts.partials.header')
 
             <!-- ============================================ -->

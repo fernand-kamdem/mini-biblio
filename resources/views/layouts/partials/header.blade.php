@@ -16,10 +16,10 @@
 
             <div class="min-w-0 flex-1">
                 <h2 class="truncate text-base font-semibold text-gray-900 sm:text-lg">
-                    @yield('page-title', 'Dashboard')
+                    @yield('page-title', __('Dashboard'))
                 </h2>
                 <p class="mt-0.5 hidden truncate text-sm text-gray-500 sm:block">
-                    @yield('page-subtitle', 'Bienvenue sur votre espace de gestion')
+                    @yield('page-subtitle', __('Welcome to your library space'))
                 </p>
             </div>
         </div>
@@ -28,10 +28,23 @@
         <div class="flex shrink-0 items-center gap-1 sm:gap-3">
 
             <!-- Barre de recherche -->
-            <div class="hidden items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 transition-all duration-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 md:flex">
-                <i class="fas fa-search text-sm text-gray-400"></i>
-                <input type="text" placeholder="Rechercher..." class="w-40 border-none bg-transparent text-sm outline-none transition-all duration-300 focus:w-56 lg:w-48 lg:focus:w-64">
-            </div>
+            <form
+                method="GET"
+                action="{{ route('biblio-book.list') }}"
+                role="search"
+                class="hidden items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 transition-all duration-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 md:flex"
+            >
+                <label for="recherche-catalogue" class="sr-only">{{ __('Search the catalog') }}</label>
+                <i class="fas fa-search text-sm text-gray-400" aria-hidden="true"></i>
+                <input
+                    id="recherche-catalogue"
+                    type="search"
+                    name="search"
+                    value="{{ request()->routeIs('biblio-book.list') ? request('search') : '' }}"
+                    placeholder="{{ __('Search a book or an author...') }}"
+                    class="w-40 border-none bg-transparent p-0 text-sm outline-none transition-all duration-300 focus:w-56 focus:ring-0 lg:w-48 lg:focus:w-64"
+                >
+            </form>
 
             {{--
               Cloche notifications (Livewire).
@@ -54,11 +67,11 @@
                     @click="open = !open"
                 >
                     <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-sm font-semibold text-white">
-                        {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'U' }}
+                        {{ auth()->user()?->initials() ?? 'U' }}
                     </div>
                     <div class="hidden min-w-0 text-left lg:block">
                         <p class="max-w-[10rem] truncate text-sm font-medium text-gray-900">
-                            {{ auth()->user() ? auth()->user()->name : 'Utilisateur' }}
+                            {{ auth()->user()?->name ?? __('User') }}
                         </p>
                         <p class="max-w-[10rem] truncate text-xs text-gray-500">
                             {{ auth()->user() ? auth()->user()->email : '' }}
@@ -84,7 +97,7 @@
                     class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-200 bg-white py-1 shadow-lg"
                 >
                     <div class="border-b border-gray-100 px-4 py-3">
-                        <p class="truncate text-sm font-semibold text-gray-900">{{ auth()->user() ? auth()->user()->name : 'Utilisateur' }}</p>
+                        <p class="truncate text-sm font-semibold text-gray-900">{{ auth()->user()?->name ?? __('User') }}</p>
                         <p class="truncate text-xs text-gray-500">{{ auth()->user() ? auth()->user()->email : '' }}</p>
                     </div>
 

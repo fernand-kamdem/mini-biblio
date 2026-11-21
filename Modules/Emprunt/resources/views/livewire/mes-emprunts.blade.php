@@ -49,9 +49,8 @@
                         wire:model.live="onlyLate"
                         class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
                     >
-                        <option value="">{{ __('All loans') }}</option>
-                        <option value="true">{{ __('Late only') }}</option>
-                        <option value="false">{{ __('Not late') }}</option>
+                        <option value="0">{{ __('All loans') }}</option>
+                        <option value="1">{{ __('Late only') }}</option>
                     </select>
                 </div>
             </div>
@@ -104,7 +103,7 @@
                             <p class="font-medium text-gray-900 truncate max-w-xs">{{ $emprunt?->book?->titre }}</p>
                             @forelse($emprunt?->book?->authors as $author)
                                 <p class="text-xs text-gray-500 truncate max-w-xs">
-                                 {{ $author->name }}
+                                 {{ trim($author->prenom.' '.$author->nom) }}
                                 </p>
                             @empty
                                 {{ __('No Author')}}
@@ -187,7 +186,7 @@
                     };
 
                     $authorsLabel = $emprunt?->book?->authors?->isNotEmpty()
-                        ? $emprunt->book->authors->map(fn($a) => $a->name)->join(', ')
+                        ? $emprunt->book->authors->map(fn ($author) => trim($author->prenom.' '.$author->nom))->join(', ')
                         : __('No Author');
 
                     $isLate = $emprunt->date_retour_prevue
@@ -216,7 +215,7 @@
                     {{-- Informations --}}
                     <div class="space-y-1">
                         <p class="text-sm text-gray-700 truncate">
-                            {{ $emprunt?->book?->titre ?? '—' }} - {{ $authorsLabel }}
+                            {{ $emprunt?->book?->titre ?? '—' }} · {{ $authorsLabel }}
                         </p>
                         <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 pt-1">
                             <span class="inline-flex items-center gap-1">

@@ -2,14 +2,16 @@
 
 namespace Modules\Emprunt\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Biblio\Models\Book;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Emprunt\Database\Factories\EmpruntFactory;
 use Modules\Emprunt\Enums\StatutEmprunt;
-// use Modules\Emprunt\Database\Factories\EmpruntFactory;
 
 class Emprunt extends Model
 {
@@ -30,9 +32,9 @@ class Emprunt extends Model
         'approuve_par',
         'recu_par',
         'note_membre',
-        'note_bibliothecaire',  
+        'note_bibliothecaire',
     ];
-    
+
     protected $casts = [
         'statut' => StatutEmprunt::class,
         'date_emprunt' => 'date',
@@ -41,41 +43,71 @@ class Emprunt extends Model
         'date_retour_reelle' => 'date',
     ];
 
-    public function member():BelongsTo
+    public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
     }
 
-    public function book():BelongsTo
+    public function book(): BelongsTo
     {
-        return $this->belongsTo(Book::class);        
+        return $this->belongsTo(Book::class);
     }
 
-    public function approbateur():BelongsTo
+    public function approbateur(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approuve_par');        
+        return $this->belongsTo(User::class, 'approuve_par');
     }
 
-    public function recepteur():BelongsTo
+    public function recepteur(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recu_par');        
+        return $this->belongsTo(User::class, 'recu_par');
     }
 
-    //methode pour lire l'etat actuel de l'objet (getter)
+    /**
+     * RG-15 : un emprunt est en retard s'il est approuvé et que sa date de retour prévue est passée.
+     * Un livre attendu aujourd'hui n'est pas encore en retard.
+     *
+     * @param  Builder<Emprunt>  $query
+     */
+    #[Scope]
+    protected function enRetard(Builder $query): void
+    {
+        $query->where('statut', StatutEmprunt::Approuve)
+            ->whereDate('date_retour_prevue', '<', today());
+    }
+
+    public function estEnRetard(): bool
+    {
+        return $this->statut === StatutEmprunt::Approuve
+            && $this->date_retour_prevue !== null
+            && $this->date_retour_prevue->lt(today());
+    }
+
+    /**
+     * Nombre de jours de retard, 0 si l'emprunt n'est pas en retard.
+     */
+    public function joursDeRetard(): int
+    {
+        return $this->estEnRetard()
+            ? (int) $this->date_retour_prevue->diffInDays(today())
+            : 0;
+    }
+
+    // methode pour lire l'etat actuel de l'objet (getter)
     public function getWorkflowState(): string
     {
         return $this->workflow_state;
     }
 
-    //methode pour ecrire l'etat actuel de l'objet (setter)
+    // methode pour ecrire l'etat actuel de l'objet (setter)
     public function setWorkflowState(string $state, array $context = []): void
     {
         $this->workflow_state = $state;
-        $this->statut = StatutEmprunt::tryFrom($state); 
+        $this->statut = StatutEmprunt::tryFrom($state);
     }
 
-    // protected static function newFactory(): EmpruntFactory
-    // {
-    //     // return EmpruntFactory::new();
-    // }
+    protected static function newFactory(): EmpruntFactory
+    {
+        return EmpruntFactory::new();
+    }
 }

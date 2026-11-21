@@ -43,4 +43,20 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Compte d'un bibliothécaire (rôle BIBLIOTHECAIRE).
+     */
+    public function bibliothecaire(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole('BIBLIOTHECAIRE'));
+    }
+
+    /**
+     * Compte d'un administrateur (rôle ADMIN).
+     */
+    public function administrateur(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole('ADMIN'));
+    }
 }

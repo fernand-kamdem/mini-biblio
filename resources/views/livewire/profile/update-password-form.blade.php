@@ -21,6 +21,13 @@ new class extends Component
      */
     public function updatePassword(): void
     {
+        if (Auth::user()->isDemoAccount()) {
+            $this->reset('current_password', 'password', 'password_confirmation');
+            $this->addError('current_password', __('Demo accounts cannot be changed.'));
+
+            return;
+        }
+
         try {
             $validated = $this->validate([
                 'current_password' => ['required', 'string', 'current_password'],
