@@ -75,7 +75,8 @@ class EmpruntApprove extends Component
         if ($this->empruntId) {
             $emprunt = Emprunt::findOrFail($empruntId);
             $this->empruntId = $emprunt->id;
-            $this->date_retour_souhaitee = $emprunt->date_retour_souhaitee?->format('d/m/Y') ?? '';
+            // Format AAAA-MM-JJ : le seul qu'accepte le champ <input type="date">.
+            $this->date_retour_souhaitee = $emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
         }
     }
 

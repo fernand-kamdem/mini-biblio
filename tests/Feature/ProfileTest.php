@@ -25,6 +25,7 @@ test('profile information can be updated', function () {
     $component = Volt::test('profile.update-profile-information-form')
         ->set('name', 'Test User')
         ->set('email', 'test@example.com')
+        ->set('phone', '0612345678')
         ->call('updateProfileInformation');
 
     $component
@@ -46,6 +47,7 @@ test('email verification status is unchanged when the email address is unchanged
     $component = Volt::test('profile.update-profile-information-form')
         ->set('name', 'Test User')
         ->set('email', $user->email)
+        ->set('phone', '0612345678')
         ->call('updateProfileInformation');
 
     $component
@@ -69,7 +71,9 @@ test('user can delete their account', function () {
         ->assertRedirect('/');
 
     $this->assertGuest();
-    $this->assertNull($user->fresh());
+
+    // Les comptes utilisent les SoftDeletes : la ligne est marquée supprimée, pas effacée.
+    $this->assertSoftDeleted($user);
 });
 
 test('correct password must be provided to delete account', function () {

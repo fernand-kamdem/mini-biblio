@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\LocaleController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -17,10 +16,10 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-//--- modification de la locale
+// --- modification de la locale
 Route::get('/lang/{locale}', [LocaleController::class, 'setLocale'])->name('change.language');
 
-//--- déconnexion
+// --- déconnexion
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');

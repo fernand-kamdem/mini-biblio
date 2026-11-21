@@ -11,15 +11,25 @@ class EmpruntShowAdmin extends Component
 {
     // --- Données affichées ---
     public ?int $empruntId = null;
+
     public string $statut = '';
+
     public ?Book $book = null;
+
     public ?User $approbateur = null;
+
     public ?User $recepteur = null;
+
     public string $date_retour_prevue = '';
+
     public string $date_retour_souhaitee = '';
+
     public string $date_retour_reelle = '';
+
     public string $date_emprunt = '';
+
     public ?string $note_membre = null;
+
     public ?string $note_bibliothecaire = null;
 
     // --- Approve ---
@@ -28,13 +38,11 @@ class EmpruntShowAdmin extends Component
         $this->dispatch('openModalApprove', loanId: (int) $this->empruntId);
     }
 
-
     // --- Return Loan ---
     public function requestRetourner(): void
     {
         $this->dispatch('returnLoan', empruntId: (int) $this->empruntId);
     }
-
 
     // --- Lifecycle ---
     public function mount(?int $empruntId = null): void

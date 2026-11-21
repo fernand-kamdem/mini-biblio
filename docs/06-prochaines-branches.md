@@ -76,9 +76,8 @@ Ne pas `composer require anhskohbo/no-captcha` tant que Guzzle 8 est là.
 
 ---
 
-## Ce qu’on ne copie **pas** d’Easy Day-O
+## Choix du projet
 
-- Thème Borex / ChronoTemps
-- SSO Microsoft
-- Register / forgot-password **commentés** (mini-biblio = inscription publique)
-- `MustVerifyEmail` commenté (ici : vérif e-mail **activée**)
+- Pas de SSO : connexion par e-mail et mot de passe
+- Inscription publique et mot de passe oublié **actifs**
+- Vérification de l'e-mail **activée** (`MustVerifyEmail`)

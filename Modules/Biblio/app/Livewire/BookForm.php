@@ -2,6 +2,7 @@
 
 namespace Modules\Biblio\Livewire;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -56,7 +57,7 @@ class BookForm extends Component
 
     public string $authorSearch = '';
 
-    /** @var \Illuminate\Support\Collection|array */
+    /** @var Collection|array */
     public $categories = [];
 
     // =========================================================================
@@ -190,8 +191,8 @@ class BookForm extends Component
             ->select(['id', 'nom', 'prenom'])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('nom', 'ilike', '%'.$search.'%')
-                        ->orWhere('prenom', 'ilike', '%'.$search.'%');
+                    $query->whereLike('nom', '%'.$search.'%')
+                        ->orWhereLike('prenom', '%'.$search.'%');
                 });
             })
             ->orderBy('nom')

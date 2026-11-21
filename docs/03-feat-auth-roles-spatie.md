@@ -1,42 +1,42 @@
-# 3 — Branche `feat/auth-roles-spatie`
+# 3 â€” Branche `feat/auth-roles-spatie`
 
-**But :** rôles **ADMIN**, **BIBLIOTHECAIRE**, **MEMBRE** + comptes de test. Alias Spatie déjà posés en [02](./02-feat-auth-login-easyday.md).
+**But :** rÃ´les **ADMIN**, **BIBLIOTHECAIRE**, **MEMBRE** + comptes de test. Alias Spatie dÃ©jÃ  posÃ©s en [02](./02-feat-auth-compte-actif.md).
 
 ```bash
-git checkout master   # après merge feat/auth-login-easyday
+git checkout master   # aprÃ¨s merge feat/auth-compte-actif
 git checkout -b feat/auth-roles-spatie
 ```
 
-Ne pas republier Spatie si `config/permission.php` existe déjà.
+Ne pas republier Spatie si `config/permission.php` existe dÃ©jÃ .
 
-## Fichier créé : `database/seeders/RolesPermissionsSeeder.php`
+## Fichier crÃ©Ã© : `database/seeders/RolesPermissionsSeeder.php`
 
-Permissions (noms du README racine, pas Easy Day-O) :
+Permissions (noms du README racine) :
 
-- `voir-livres`, `gérer-livres`
-- `créer-emprunt`, `voir-mes-emprunts`, `annuler-emprunt`
-- `gérer-emprunts`, `approuver-emprunt`, `refuser-emprunt`, `valider-retour`
-- `voir-membres`, `gérer-membres`
+- `voir-livres`, `gÃ©rer-livres`
+- `crÃ©er-emprunt`, `voir-mes-emprunts`, `annuler-emprunt`
+- `gÃ©rer-emprunts`, `approuver-emprunt`, `refuser-emprunt`, `valider-retour`
+- `voir-membres`, `gÃ©rer-membres`
 
-| Rôle | Permissions |
+| RÃ´le | Permissions |
 |------|-------------|
 | ADMIN | toutes |
-| BIBLIOTHECAIRE | livres, emprunts (gérer / approuver / refuser / retour), membres |
-| MEMBRE | voir livres + ses emprunts (créer / voir / annuler) |
+| BIBLIOTHECAIRE | livres, emprunts (gÃ©rer / approuver / refuser / retour), membres |
+| MEMBRE | voir livres + ses emprunts (crÃ©er / voir / annuler) |
 
 Comptes : `admin@mail.com` / `biblio@mail.com`, mot de passe `password`, `is_active => true`, `email_verified_at` rempli.
 
-`Permission::firstOrCreate` + `Role::firstOrCreate` + `User::firstOrCreate` pour relancer le seeder sans doublons. Vider le cache Spatie en tête de `run()` : `PermissionRegistrar::forgetCachedPermissions()`.
+`Permission::firstOrCreate` + `Role::firstOrCreate` + `User::firstOrCreate` pour relancer le seeder sans doublons. Vider le cache Spatie en tÃªte de `run()` : `PermissionRegistrar::forgetCachedPermissions()`.
 
-Le mot de passe en clair `'password'` est hashé par le **cast** `User` (`hashed`), pas par `Hash::make` dans le seeder.
+Le mot de passe en clair `'password'` est hashÃ© par le **cast** `User` (`hashed`), pas par `Hash::make` dans le seeder.
 
-## Encore à faire (pas sur cette branche)
+## Encore Ã  faire (pas sur cette branche)
 
-| Tâche | Pourquoi |
+| TÃ¢che | Pourquoi |
 |-------|----------|
-| `$this->call(RolesPermissionsSeeder::class)` dans `DatabaseSeeder` | Aujourd’hui seul `test@example.com` est créé au `db:seed` |
-| `User::create` à l’inscription ? `assignRole('MEMBRE')` | Sans ça, un inscrit n’a aucune permission Spatie |
-| `'is_active' => true` dans `UserFactory` | Toujours le piège tests 302 (doc 02) |
+| `$this->call(RolesPermissionsSeeder::class)` dans `DatabaseSeeder` | Aujourdâ€™hui seul `test@example.com` est crÃ©Ã© au `db:seed` |
+| `User::create` Ã  lâ€™inscription ? `assignRole('MEMBRE')` | Sans Ã§a, un inscrit nâ€™a aucune permission Spatie |
+| `'is_active' => true` dans `UserFactory` | Toujours le piÃ¨ge tests 302 (doc 02) |
 
 Les `->middleware('permission:voir-livres')` iront sur les **modules**, pas ici.
 
@@ -44,7 +44,7 @@ Les `->middleware('permission:voir-livres')` iront sur les **modules**, pas ici.
 
 ```bash
 php artisan db:seed --class=RolesPermissionsSeeder
-# ou, une fois branché dans DatabaseSeeder :
+# ou, une fois branchÃ© dans DatabaseSeeder :
 php artisan migrate:fresh --seed
 ```
 
@@ -52,5 +52,5 @@ php artisan migrate:fresh --seed
 
 ```bash
 git add database/seeders/RolesPermissionsSeeder.php
-git commit -m "Seeder Spatie : rôles ADMIN, BIBLIOTHECAIRE, MEMBRE et comptes de test."
+git commit -m "Seeder Spatie : rÃ´les ADMIN, BIBLIOTHECAIRE, MEMBRE et comptes de test."
 ```

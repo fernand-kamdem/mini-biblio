@@ -2,25 +2,25 @@
 
 namespace Modules\Emprunt\Providers;
 
+use Livewire\Livewire;
+use Modules\Emprunt\Livewire\EmpruntApprove;
+use Modules\Emprunt\Livewire\EmpruntForm;
+use Modules\Emprunt\Livewire\EmpruntList;
+use Modules\Emprunt\Livewire\EmpruntRefuse;
+use Modules\Emprunt\Livewire\EmpruntShow;
+use Modules\Emprunt\Livewire\EmpruntShowAdmin;
+use Modules\Emprunt\Livewire\LibrarianForm;
+use Modules\Emprunt\Livewire\LibrarianList;
+use Modules\Emprunt\Livewire\LibrarianShow;
+use Modules\Emprunt\Livewire\MemberForm;
+use Modules\Emprunt\Livewire\MemberList;
+use Modules\Emprunt\Livewire\MemberShow;
+use Modules\Emprunt\Livewire\MesEmprunts;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Symfony\Component\Workflow\DefinitionBuilder;
 use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
-use Livewire\Livewire;
-use Modules\Emprunt\Livewire\MemberList;
-use Modules\Emprunt\Livewire\MemberForm;
-use Modules\Emprunt\Livewire\MemberShow;
-use Modules\Emprunt\Livewire\EmpruntList;
-use Modules\Emprunt\Livewire\LibrarianForm;
-use Modules\Emprunt\Livewire\LibrarianShow;
-use Modules\Emprunt\Livewire\LibrarianList;
-use Modules\Emprunt\Livewire\EmpruntForm;
-use Modules\Emprunt\Livewire\MesEmprunts;
-use Modules\Emprunt\Livewire\EmpruntShow;
-use Modules\Emprunt\Livewire\EmpruntApprove;
-use Modules\Emprunt\Livewire\EmpruntRefuse;
-use Modules\Emprunt\Livewire\EmpruntShowAdmin;
 
 /**
  * Provider du module Emprunt.
@@ -68,7 +68,7 @@ class EmpruntServiceProvider extends ModuleServiceProvider
     /**
      * Define module schedules.
      *
-     * @param $schedule
+     * @param  $schedule
      */
     // protected function configureSchedules(Schedule $schedule): void
     // {
@@ -144,7 +144,6 @@ class EmpruntServiceProvider extends ModuleServiceProvider
         });
     }
 
-
     public function boot(): void
     {
         parent::boot();
@@ -154,7 +153,7 @@ class EmpruntServiceProvider extends ModuleServiceProvider
 
     protected function registerLivewireComponents(): void
     {
-        Livewire::component('emprunt::member-list', MemberList::class); 
+        Livewire::component('emprunt::member-list', MemberList::class);
         Livewire::component('emprunt::member-form', MemberForm::class);
         Livewire::component('emprunt::member-show', MemberShow::class);
         Livewire::component('emprunt::librarian-list', LibrarianList::class);

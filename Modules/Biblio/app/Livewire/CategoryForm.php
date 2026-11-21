@@ -2,45 +2,48 @@
 
 namespace Modules\Biblio\Livewire;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Modules\Biblio\Models\Category;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
 
-class CategoryForm extends Component{
+class CategoryForm extends Component
+{
+    public string $nom = '';
 
+    public string $description = '';
 
-    public string $nom='';
-    public string $description='';
-    public ?int $categoryId=null;
+    public ?int $categoryId = null;
 
     public function rules(): array
     {
         return [
-            'nom' =>['required', 
-            $this->categoryId
-            ? Rule::unique('categories', 'nom')->ignore($this->categoryId)
-            : 'unique:categories,nom',],
-            'description'=>['nullable', 'string']
+            'nom' => ['required',
+                $this->categoryId
+                ? Rule::unique('categories', 'nom')->ignore($this->categoryId)
+                : 'unique:categories,nom', ],
+            'description' => ['nullable', 'string'],
         ];
     }
 
-    public function mount(?int $categoryId=null):void {
-        
-        $this->categoryId=$categoryId;
+    public function mount(?int $categoryId = null): void
+    {
 
-        if($this->categoryId){
-            $category=Category::findOrFail($this->categoryId);
-            $this->nom=$category->nom;
-            $this->description=$category->description??'';
+        $this->categoryId = $categoryId;
+
+        if ($this->categoryId) {
+            $category = Category::findOrFail($this->categoryId);
+            $this->nom = $category->nom;
+            $this->description = $category->description ?? '';
         }
     }
 
-    public function cancel(){
+    public function cancel()
+    {
         $this->dispatch('modalClose');
     }
 
-    public function save():void
+    public function save(): void
     {
 
         if (! Auth::user()?->can('gérer-catégories')) {
@@ -48,23 +51,23 @@ class CategoryForm extends Component{
         }
         $this->validate();
 
-         $data=[
-            'nom'=>$this->nom,
-            'description'=>$this->description
-         ];
+        $data = [
+            'nom' => $this->nom,
+            'description' => $this->description,
+        ];
 
-         if($this->categoryId){
-            $category=Category::findOrFail($this->categoryId);
+        if ($this->categoryId) {
+            $category = Category::findOrFail($this->categoryId);
             $category->update($data);
             $this->dispatch('categoryUpdated');
-         }else{
-            $category=Category::create($data);
+        } else {
+            $category = Category::create($data);
             $this->dispatch('categoryCreated');
-         }
+        }
     }
 
-    public function render(){
+    public function render()
+    {
         return view('biblio::livewire.category-form');
     }
 }
-?>

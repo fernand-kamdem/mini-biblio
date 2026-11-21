@@ -14,9 +14,13 @@ class EmpruntForm extends Component
 {
     // --- Champs du formulaire ---
     public string $bookSearch = '';
+
     public ?int $bookId = null;
+
     public ?int $empruntId = null;
+
     public ?string $note = null;
+
     public string $dateRetourSouhaitee = '';
 
     // --- Sélection livre ---
@@ -96,8 +100,8 @@ class EmpruntForm extends Component
     // --- Submit (demande) ---
     public function submit(EmpruntWorkflowService $workflow): void
     {
-        if(! Auth::user()?->can(['créer-emprunt']) 
-            && !Auth::user()?->can('modifier-emprunt')){
+        if (! Auth::user()?->can(['créer-emprunt'])
+            && ! Auth::user()?->can('modifier-emprunt')) {
             return;
         }
 
@@ -177,7 +181,8 @@ class EmpruntForm extends Component
             $emprunt = Emprunt::findOrFail($empruntId);
             $this->bookId = $emprunt->book_id;
             $this->note = $emprunt->note_membre;
-            $this->dateRetourSouhaitee = $emprunt->date_retour_souhaitee?->format('d/m/Y') ?? '';
+            // Format AAAA-MM-JJ : le seul qu'accepte le champ <input type="date">.
+            $this->dateRetourSouhaitee = $emprunt->date_retour_souhaitee?->format('Y-m-d') ?? '';
         }
     }
 
@@ -191,11 +196,11 @@ class EmpruntForm extends Component
             ->where('stock_disponible', '>', 0)
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('titre', 'ilike', '%'.$search.'%')
+                    $q->whereLike('titre', '%'.$search.'%')
                         ->orWhereHas('authors', function ($authorQuery) use ($search) {
                             $authorQuery
-                                ->where('nom', 'ilike', '%'.$search.'%')
-                                ->orWhere('prenom', 'ilike', '%'.$search.'%');
+                                ->whereLike('nom', '%'.$search.'%')
+                                ->orWhereLike('prenom', '%'.$search.'%');
                         });
                 });
             })

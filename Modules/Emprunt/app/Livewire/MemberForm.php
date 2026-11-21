@@ -15,9 +15,13 @@ class MemberForm extends Component
 {
     // --- Champs du formulaire ---
     public ?int $memberId = null;
+
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $address = '';
 
     // --- Create / Update ---

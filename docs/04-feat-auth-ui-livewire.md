@@ -1,6 +1,6 @@
 # 4 — Branche `feat/auth-ui-livewire`
 
-**But :** UI auth Tailwind (split-screen), **sans** thème Borex. Comportement Breeze / Livewire inchangé.
+**But :** UI auth Tailwind (split-screen). Comportement Breeze / Livewire inchangé.
 
 ```bash
 git checkout master   # après merge rôles

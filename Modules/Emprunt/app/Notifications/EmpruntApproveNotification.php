@@ -3,9 +3,9 @@
 namespace Modules\Emprunt\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Modules\Emprunt\Models\Emprunt;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
  * Notification database : demande d'emprunt approuvée.

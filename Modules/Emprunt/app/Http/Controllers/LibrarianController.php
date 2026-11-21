@@ -3,7 +3,6 @@
 namespace Modules\Emprunt\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class LibrarianController extends Controller
 {
@@ -14,5 +13,4 @@ class LibrarianController extends Controller
     {
         return view('emprunt::emprunts.librarians');
     }
-
 }

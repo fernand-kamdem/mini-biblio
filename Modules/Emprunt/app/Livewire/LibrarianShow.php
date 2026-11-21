@@ -2,15 +2,18 @@
 
 namespace Modules\Emprunt\Livewire;
 
-use Livewire\Component;
 use App\Models\User;
+use Livewire\Component;
 
 class LibrarianShow extends Component
 {
     // --- Données affichées ---
     public ?int $librarianId = null;
+
     public string $name = '';
+
     public string $email = '';
+
     public bool $is_active = false;
 
     // --- Edit ---

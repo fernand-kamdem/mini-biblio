@@ -3,15 +3,15 @@
 namespace Modules\Biblio\Providers;
 
 use Livewire\Livewire;
-use Modules\Biblio\Livewire\BookList;
-use Modules\Biblio\Livewire\CategoryList;
-use Modules\Biblio\Livewire\AuthorList;
-use Modules\Biblio\Livewire\AuthorForm;
-use Modules\Biblio\Livewire\BookForm;
-use Modules\Biblio\Livewire\CategoryForm;
-use Modules\Biblio\Livewire\BookDetails;
-use Modules\Biblio\Livewire\CategoryDetails;
 use Modules\Biblio\Livewire\AuthorDetails;
+use Modules\Biblio\Livewire\AuthorForm;
+use Modules\Biblio\Livewire\AuthorList;
+use Modules\Biblio\Livewire\BookDetails;
+use Modules\Biblio\Livewire\BookForm;
+use Modules\Biblio\Livewire\BookList;
+use Modules\Biblio\Livewire\CategoryDetails;
+use Modules\Biblio\Livewire\CategoryForm;
+use Modules\Biblio\Livewire\CategoryList;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
 class BiblioServiceProvider extends ModuleServiceProvider

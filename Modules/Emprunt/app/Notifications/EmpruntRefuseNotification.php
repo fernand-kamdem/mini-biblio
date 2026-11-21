@@ -3,9 +3,9 @@
 namespace Modules\Emprunt\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Modules\Emprunt\Models\Emprunt;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
  * Notification database : demande d'emprunt refusée.
@@ -13,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
  * Destinataire (via le listener) : le membre propriétaire (member.user).
  * Contenu stocké dans notifications.data (toArray).
  */
-class EmpruntRefuseNotification extends Notification implements ShouldQueue 
+class EmpruntRefuseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

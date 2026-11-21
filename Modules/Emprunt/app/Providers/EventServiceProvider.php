@@ -3,6 +3,12 @@
 namespace Modules\Emprunt\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Emprunt\Events\EmpruntApprove;
+use Modules\Emprunt\Events\EmpruntRefuse;
+use Modules\Emprunt\Events\EmpruntSoumis;
+use Modules\Emprunt\Listeners\NotifyBibliothecairesOrAdminEmpruntSoumis;
+use Modules\Emprunt\Listeners\NotifyMemberEmpruntApprove;
+use Modules\Emprunt\Listeners\NotifyMemberEmpruntRefuse;
 
 /**
  * Mapping Event → Listener(s) du module Emprunt.
@@ -23,16 +29,16 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         // Soumission → notifier le staff
-        \Modules\Emprunt\Events\EmpruntSoumis::class => [
-            \Modules\Emprunt\Listeners\NotifyBibliothecairesOrAdminEmpruntSoumis::class,
+        EmpruntSoumis::class => [
+            NotifyBibliothecairesOrAdminEmpruntSoumis::class,
         ],
         // Approbation → notifier le membre
-        \Modules\Emprunt\Events\EmpruntApprove::class => [
-            \Modules\Emprunt\Listeners\NotifyMemberEmpruntApprove::class,
+        EmpruntApprove::class => [
+            NotifyMemberEmpruntApprove::class,
         ],
         // Refus → notifier le membre
-        \Modules\Emprunt\Events\EmpruntRefuse::class => [
-            \Modules\Emprunt\Listeners\NotifyMemberEmpruntRefuse::class,
+        EmpruntRefuse::class => [
+            NotifyMemberEmpruntRefuse::class,
         ],
     ];
 
